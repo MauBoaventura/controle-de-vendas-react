@@ -7,12 +7,12 @@ export const PedidoList = props => (
         <Datagrid rowClick="edit">
             <TextField source="id" />
             <ReferenceField source="clienteId" reference="clientes"><TextField source="name" /></ReferenceField>
-            <ReferenceField source="tabelaId" reference="tabeladeprecos"><TextField source="name" /></ReferenceField>
-            <ReferenceField source="tabelaCompraId" reference="tabeladecompras"><TextField source="name" /></ReferenceField>
+            {/* <ReferenceField source="tabelaCompraId" reference="tabeladecompras"><TextField source="navalorme" /></ReferenceField> */}
             <DateField source="dataPedido" />
             {/* <DateField source="dataVencimentoPedido" /> */}
             <NumberField source="quant_caixa" />
             <NumberField source="quilo" />
+            <ReferenceField options={{ label: 'Clientes' }}source="tabelaId" reference="tabeladeprecos"><TextField source="valor" /></ReferenceField>
             <NumberField source="desconto" />
             <NumberField source="totalDaNota" />
             <TextField source="situacao" />
