@@ -1,18 +1,18 @@
 import * as React from "react";
-import { List, Datagrid, TextField, EmailField, NumberField, DateField, Create } from 'react-admin';
+import { List, Datagrid, TextField, EmailField, NumberField, Create } from 'react-admin';
 import { Edit, SimpleForm, TextInput, NumberInput, DateInput } from 'react-admin';
 import { Filter, ReferenceInput, SelectInput } from 'react-admin';
 
 export const ClienteList = props => (
-    <List filters={<PostFilter />} {...props}>
+    <List filters={<CLienteFilter />} {...props}>
         <Datagrid rowClick="edit">
             <TextField source="id" />
-            <TextField source="name" />
+            <TextField label="Nome" source="name" />
             <EmailField source="email" />
             <TextField source="telefone" />
-            <TextField source="endereco" />
+            <TextField label="Endereço" source="endereco" />
             <NumberField source="diasParaPagar" />
-            <DateField source="createdAt" />
+            {/* <DateField label="Criado em:" source="createdAt" /> */}
             {/* <DateField source="updatedAt" />
             <DateField source="deletedAt" /> */}
         </Datagrid>
@@ -50,7 +50,7 @@ export const ClienteCreate = (props) => {
     </Create>
 }
 
-const PostFilter = (props) => (
+const CLienteFilter = (props) => (
     <Filter {...props}>
         {/* <TextInput label="Search" source="q" alwaysOn /> */}
         <ReferenceInput label="Cliente" source="id" reference="clientes">
