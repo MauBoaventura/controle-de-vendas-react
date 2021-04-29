@@ -54,6 +54,8 @@ export default function SignIn({history}) {
     async function handleSubmit(event) {
         event.preventDefault();
         try {
+            console.log(email)
+            console.log(password)
         } catch (error) {
             console.log(error)
         }
