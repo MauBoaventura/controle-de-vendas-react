@@ -22,7 +22,6 @@ const dataProvider = jsonServerProvider('http://localhost:3035');
 
 const App = () => (
   <Admin dataProvider={dataProvider} loginPage={MyLoginPage} i18nProvider={i18nProvider}>
-    {/* <Route path='/login' exact component={Login}></Route> */}
     <Resource name="clientes" options={{ label: 'Clientes' }} list={ClienteList} edit={ClienteEdit} create={ClienteCreate} />
     <Resource name="tabeladeprecos" options={{ label: 'Tabela de preços' }} list={TabeladeprecoList} edit={TabeladeprecoEdit} create={TabeladeprecoCreate} />
     <Resource name="tabeladecompras" options={{ label: 'Preços de compra' }} list={TabeladecompraList} edit={TabeladecompraEdit} create={TabeladecompraCreate} />
