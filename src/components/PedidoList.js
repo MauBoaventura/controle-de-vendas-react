@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { List, Edit, Create, ChipField, ReferenceField, SimpleForm, Datagrid, TextField, NumberField, DateField } from 'react-admin';
 import { TextInput, ReferenceInput, SelectInput, DateInput, NumberInput } from 'react-admin';
 import { client } from "../services";
+const frete_por_quilo = 0.02;
 
 const moment = require('moment')
 
@@ -34,44 +35,37 @@ export const PedidoList = props => (
 
 
 export const PedidoEdit = props => {
-    const [dataVencimento, setDataVencimento
-    ] = useState(['']);
+    const [dataVencimento, setDataVencimento] = useState('');
+    const [totalDaNota, setTotalDaNota] = useState(['']);
+    const [frete, setFrete] = useState(['']);
+    const [valorLucro, setValorLucro] = useState(['']);
     useEffect(() => {
         async function loadAll() {
             try {
-                if (document.getElementById('clienteId') !== undefined) {
-                    var id = (document.getElementById('id').value)
-                    var dataVencimentoPedido = (await client.get("/pedidos/" + id)).data.dataVencimentoPedido;
-                    const time = moment(dataVencimentoPedido).format("YYYY-MM-DD");
-                    setDataVencimento
-                    (time);
-                }
-                if (dataVencimento !== undefined) {
-                    var clienteId = document.getElementsByName('clienteId')[0].value
-                    var diasParaPagar = (await client.get("/clientes/" + clienteId)).data.diasParaPagar;
-                    const time = moment(document.getElementById('dataPedido').value).add(diasParaPagar || 0, 'days').format("YYYY-MM-DD");
-                    setDataVencimento
-                    (time);
-
-                }
+                var id = (document.getElementById('id').value)
+                var pedido = (await client.get("/pedidos/" + id));
+                const time = moment(pedido.data.dataVencimentoPedido).format("YYYY-MM-DD");
+                setDataVencimento(time);
+                setFrete(pedido.data.frete)
+                setTotalDaNota(pedido.data.totalDaNota)
+                setValorLucro(pedido.data.valorLucro)
             } catch (error) {
-
+                console.error(error)
             }
         }
         loadAll()
-    },[])
+    }, [])
 
     const mudarDataVencimento = async (event) => {
         try {
             if (document.getElementById('clienteId') !== undefined) {
                 var clienteId = document.getElementsByName('clienteId')[0].value
-                
+
                 var diasParaPagar = (await client.get("/clientes/" + clienteId)).data.diasParaPagar;
-                
-                var time = moment(event.target.value).add(diasParaPagar||0, 'days').format("YYYY-MM-DD");
-                console.log(dataVencimento);
+
+                var time = moment(event.target.value).add(diasParaPagar || 0, 'days').format("YYYY-MM-DD");
                 setDataVencimento
-                (time);
+                    (time);
             }
 
         } catch (error) {
@@ -79,9 +73,60 @@ export const PedidoEdit = props => {
         }
     }
 
+    const mudarValorTotal = async (event) => {
+        try {
+            if (document.getElementById('clienteId') !== undefined) {
+                var tabelaId = document.getElementsByName('tabelaId')[0].value
+
+                var quilo = document.getElementById('quilo').value;
+                var valorDeVenda = (await client.get("/tabeladeprecos/" + tabelaId)).data.valor;
+                var desconto = document.getElementById('desconto').value;
+                var totalDaNota = quilo * (valorDeVenda - frete_por_quilo) - desconto
+                setTotalDaNota(parseFloat(totalDaNota.toFixed(2)));
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const mudarValorFrete = async (event) => {
+        try {
+            if (document.getElementById('clienteId') !== undefined) {
+                var quilo = document.getElementById('quilo').value;
+
+                var frete = quilo * frete_por_quilo
+                setFrete(parseFloat(frete.toFixed(2)));
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const mudarValorLucro = async (event) => {
+        try {
+            if (document.getElementById('clienteId') !== undefined) {
+                var tabelaCompraId = document.getElementsByName('tabelaCompraId')[0].value
+
+                var quilo = document.getElementById('quilo').value;
+                var valorCompra = (await client.get("/tabeladecompras/" + tabelaCompraId)).data.valorCompra;
+                var totalDaNota = document.getElementById('totalDaNota').value;
+
+                var lucro = totalDaNota - (valorCompra * quilo)
+                setValorLucro(parseFloat(lucro.toFixed(2)));
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     const transform = data => ({
         ...data,
-        dataVencimentoPedido: document.getElementById('dataVencimentoPedido').value
+        dataVencimentoPedido: document.getElementById('dataVencimentoPedido').value,
+        totalDaNota: document.getElementById('totalDaNota').value,
+        valorLucro: document.getElementById('valorLucro').value
     });
 
     return (
@@ -89,63 +134,72 @@ export const PedidoEdit = props => {
             <SimpleForm>
                 <TextInput disabled source="id" />
                 <ReferenceInput source="clienteId" reference="clientes"><SelectInput optionText="name" /></ReferenceInput>
-                <ReferenceInput source="tabelaId" reference="tabeladeprecos"><SelectInput optionText="name" /></ReferenceInput>
-                <ReferenceInput source="tabelaCompraId" reference="tabeladecompras"><SelectInput optionText="name" /></ReferenceInput>
+                <ReferenceInput source="tabelaId" reference="tabeladeprecos" onChange={(event) => {
+                    mudarValorTotal(event);
+                    mudarValorFrete(event)
+                    mudarValorLucro(event)
+                }} ><SelectInput optionText="name" /></ReferenceInput>
+                <ReferenceInput source="tabelaCompraId" reference="tabeladecompras" onChange={(event) => {
+                    mudarValorTotal(event);
+                    mudarValorFrete(event)
+                    mudarValorLucro(event)
+                }} ><SelectInput optionText="name" /></ReferenceInput>
                 <DateInput source="dataPedido" onChange={(event) => {
                     mudarDataVencimento(event);
                 }} />
                 <DateInput source="dataVencimentoPedido" options={{ value: dataVencimento }} />
-                <NumberInput source="quant_caixa" />
-                <NumberInput source="quilo" />
-                <NumberInput source="desconto" />
-                <NumberInput source="frete" />
-                <NumberInput source="totalDaNota" />
                 <SelectInput source="situacao" defaultChecked={[1]} choices={choices} />
-                <NumberInput source="valorLucro" />
+                <NumberInput source="quant_caixa" />
+                <NumberInput source="quilo" onChange={(event) => {
+                    mudarValorTotal(event);
+                    mudarValorFrete(event)
+                    mudarValorLucro(event)
+                }} />
+                <NumberInput source="desconto" onChange={(event) => {
+                    mudarValorTotal(event);
+                    mudarValorLucro(event);
+                }} />
+                <NumberInput disabled source="frete" options={{ value: frete }} />
+                <NumberInput disabled source="totalDaNota" options={{ value: totalDaNota }} />
+                <NumberInput disabled source="valorLucro" options={{ value: valorLucro }} />
             </SimpleForm>
         </Edit>
     );
 }
 
 export const PedidoCreate = props => {
-    const [dataVencimento, setDataVencimento
-    ] = useState(['']);
+    const [erro] = useState('');
+    const [dataVencimento, setDataVencimento] = useState('');
+    const [totalDaNota, setTotalDaNota] = useState(['']);
+    const [frete, setFrete] = useState(['']);
+    const [valorLucro, setValorLucro] = useState(['']);
     useEffect(() => {
         async function loadAll() {
             try {
-                if (document.getElementById('clienteId') !== undefined) {
-                    var id = (document.getElementById('id').value)
-                    var dataVencimentoPedido = (await client.get("/pedidos/" + id)).data.dataVencimentoPedido;
-                    const time = moment(dataVencimentoPedido).format("YYYY-MM-DD");
-                    setDataVencimento
-                    (time);
-                }
-                if (dataVencimento !== undefined) {
-                    var clienteId = document.getElementsByName('clienteId')[0].value
-                    var diasParaPagar = (await client.get("/clientes/" + clienteId)).data.diasParaPagar;
-                    const time = moment(document.getElementById('dataPedido').value).add(diasParaPagar || 0, 'days').format("YYYY-MM-DD");
-                    setDataVencimento
-                    (time);
-
-                }
+                var id = (document.getElementById('id').value)
+                var pedido = (await client.get("/pedidos/" + id));
+                const time = moment(pedido.data.dataVencimentoPedido).format("YYYY-MM-DD");
+                setDataVencimento(time);
+                setFrete(pedido.data.frete)
+                setTotalDaNota(pedido.data.totalDaNota)
+                setValorLucro(pedido.data.valorLucro)
             } catch (error) {
-
+                console.error(error)
             }
         }
-        loadAll()
-    },[])
+            loadAll()
+    }, [erro])
 
     const mudarDataVencimento = async (event) => {
         try {
             if (document.getElementById('clienteId') !== undefined) {
                 var clienteId = document.getElementsByName('clienteId')[0].value
-                
+
                 var diasParaPagar = (await client.get("/clientes/" + clienteId)).data.diasParaPagar;
-                
-                var time = moment(event.target.value).add(diasParaPagar||0, 'days').format("YYYY-MM-DD");
-                console.log(dataVencimento);
+
+                var time = moment(event.target.value).add(diasParaPagar || 0, 'days').format("YYYY-MM-DD");
                 setDataVencimento
-                (time);
+                    (time);
             }
 
         } catch (error) {
@@ -153,9 +207,60 @@ export const PedidoCreate = props => {
         }
     }
 
+    const mudarValorTotal = async (event) => {
+        try {
+            if (document.getElementById('clienteId') !== undefined) {
+                var tabelaId = document.getElementsByName('tabelaId')[0].value
+
+                var quilo = document.getElementById('quilo').value;
+                var valorDeVenda = (await client.get("/tabeladeprecos/" + tabelaId)).data.valor;
+                var desconto = document.getElementById('desconto').value;
+                var totalDaNota = quilo * (valorDeVenda - frete_por_quilo) - desconto
+                setTotalDaNota(parseFloat(totalDaNota.toFixed(2)));
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const mudarValorFrete = async (event) => {
+        try {
+            if (document.getElementById('clienteId') !== undefined) {
+                var quilo = document.getElementById('quilo').value;
+
+                var frete = quilo * frete_por_quilo
+                setFrete(parseFloat(frete.toFixed(2)));
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const mudarValorLucro = async (event) => {
+        try {
+            if (document.getElementById('clienteId') !== undefined) {
+                var tabelaCompraId = document.getElementsByName('tabelaCompraId')[0].value
+
+                var quilo = document.getElementById('quilo').value;
+                var valorCompra = (await client.get("/tabeladecompras/" + tabelaCompraId)).data.valorCompra;
+                var totalDaNota = document.getElementById('totalDaNota').value;
+
+                var lucro = totalDaNota - (valorCompra * quilo)
+                setValorLucro(parseFloat(lucro.toFixed(2)));
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     const transform = data => ({
         ...data,
-        dataVencimentoPedido: document.getElementById('dataVencimentoPedido').value
+        dataVencimentoPedido: document.getElementById('dataVencimentoPedido').value,
+        totalDaNota: document.getElementById('totalDaNota').value,
+        valorLucro: document.getElementById('valorLucro').value
     });
 
     return (
@@ -169,13 +274,20 @@ export const PedidoCreate = props => {
                     mudarDataVencimento(event);
                 }} />
                 <DateInput source="dataVencimentoPedido" options={{ value: dataVencimento }} />
-                <NumberInput source="quant_caixa" value={0} />
-                <NumberInput source="quilo" value={0} />
-                <NumberInput source="desconto" value={0} />
-                <NumberInput source="frete" value={0} />
-                <NumberInput source="totalDaNota" value={0} />
                 <SelectInput source="situacao" choices={choices} />
-                <NumberInput source="valorLucro" value={0} />
+                <NumberInput source="quant_caixa"/>
+                <NumberInput source="quilo" onChange={(event) => {
+                    mudarValorTotal(event);
+                    mudarValorFrete(event)
+                    mudarValorLucro(event)
+                }} />
+                <NumberInput source="desconto" onChange={(event) => {
+                    mudarValorTotal(event);
+                    mudarValorLucro(event);
+                }} />
+                <NumberInput disabled source="frete" options={{ value: frete }} />
+                <NumberInput disabled source="totalDaNota" options={{ value: totalDaNota }} />
+                <NumberInput disabled source="valorLucro" options={{ value: valorLucro }} />
             </SimpleForm>
         </Create>
     );
