@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^12.8.3",
     "axios": "^0.21.1",
     "moment": "^2.29.1",
+    "pdfmake": "^0.1.71",
     "prop-types": "^15.7.2",
     "ra-data-json-server": "^3.14.2",
     "ra-language-pt-br": "^1.3.6",
