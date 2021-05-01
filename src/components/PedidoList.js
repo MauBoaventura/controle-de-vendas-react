@@ -1,9 +1,21 @@
 import * as React from "react";
 import { useState, useEffect } from 'react';
-import { List, Edit, Create, ChipField, ReferenceField, SimpleForm, Datagrid, TextField, NumberField, DateField } from 'react-admin';
+import { List, Edit, Create, Filter, ChipField, ReferenceField, SimpleForm, Datagrid, TextField, NumberField, DateField } from 'react-admin';
 import { TextInput, ReferenceInput, SelectInput, DateInput, NumberInput } from 'react-admin';
 import { client } from "../services";
-const frete_por_quilo = 0.02;
+import { makeStyles, Chip } from '@material-ui/core';
+
+const frete_por_quilo = 0.2;
+
+const useQuickFilterStyles = makeStyles(theme => ({
+    chip: {
+        marginBottom: theme.spacing(1),
+    },
+}));
+const QuickFilter = ({ label }) => {
+    const classes = useQuickFilterStyles();
+    return <Chip className={classes.chip} label={(label)} />;
+};
 
 const moment = require('moment')
 
@@ -11,7 +23,7 @@ const moment = require('moment')
 const choices = [{ id: 'PAGO', name: 'PAGO' }, { id: 'ABRT', name: 'ABRT' }, { id: 'VENC', name: 'VENC' }]
 
 export const PedidoList = props => (
-    <List {...props}>
+    <List filters={<PedidoFilter />}{...props}>
         <Datagrid rowClick="edit">
             <DateField label="Data do pedido" source="dataPedido" />
             <ChipField source="situacao" />
@@ -20,19 +32,14 @@ export const PedidoList = props => (
             <DateField source="dataVencimentoPedido" />
             <NumberField label="Volumes" source="quant_caixa" />
             <NumberField label="Quilos" source="quilo" />
-            <ReferenceField label="Preço de venda" source="tabelaId" reference="tabeladeprecos"><TextField source="dataVencimento" /></ReferenceField>
-            <NumberField source="desconto" />
-            <NumberField source="frete" />
+            <ReferenceField label="Preço de venda" source="tabelaId" reference="tabeladeprecos"><TextField source="valor" /></ReferenceField>
+            {/* <NumberField source="desconto" /> */}
+            {/* <NumberField source="frete" /> */}
             <NumberField source="totalDaNota" />
-            {/* <NumberField source="valorLucro" /> */}-
-            {/* <DateField source="createdAt" />
-            <TextField source="updatedAt" />
-            <TextField source="deletedAt" /> */}
+            <NumberField source="valorLucro" />
         </Datagrid>
     </List>
 );
-
-
 
 export const PedidoEdit = props => {
     const [dataVencimento, setDataVencimento] = useState('');
@@ -268,8 +275,8 @@ export const PedidoCreate = props => {
             <SimpleForm>
                 <TextInput disabled source="id" />
                 <ReferenceInput source="clienteId" reference="clientes"><SelectInput optionText="name" /></ReferenceInput>
-                <ReferenceInput source="tabelaId" reference="tabeladeprecos"><SelectInput optionText="name" /></ReferenceInput>
-                <ReferenceInput source="tabelaCompraId" reference="tabeladecompras"><SelectInput optionText="name" /></ReferenceInput>
+                <ReferenceInput label="Preço de venda" source="tabelaId" reference="tabeladeprecos"><SelectInput optionText="name" /></ReferenceInput>
+                <ReferenceInput label="Preço de compra" source="tabelaCompraId" reference="tabeladecompras"><SelectInput optionText="name" /></ReferenceInput>
                 <DateInput source="dataPedido" onChange={(event) => {
                     mudarDataVencimento(event);
                 }} />
@@ -292,3 +299,14 @@ export const PedidoCreate = props => {
         </Create>
     );
 }
+
+const PedidoFilter = (props) => (
+    <Filter {...props}>
+        {/* <TextInput label="Search" source="q" alwaysOn /> */}
+        <ReferenceInput label="Cliente" source="clienteId" reference="clientes">
+            <SelectInput optionText="name" alwaysOn />
+        </ReferenceInput>
+        <QuickFilter source="dataVencimento" label="Vencimento Hoje" defaultValue={moment().format("YYYY-MM-DD")} />
+        <DateInput label="Data do pedido" source="dataPedido" />
+    </Filter>
+);
