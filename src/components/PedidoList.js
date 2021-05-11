@@ -5,7 +5,7 @@ import { TextInput, ReferenceInput, SelectInput, DateInput, NumberInput } from '
 import { client } from "../services";
 import { makeStyles, Chip } from '@material-ui/core';
 
-const frete_por_quilo = 0.2;
+const frete_por_quilo = process.env.frete_por_quilo||0.2;
 
 const useQuickFilterStyles = makeStyles(theme => ({
     chip: {
@@ -141,12 +141,12 @@ export const PedidoEdit = props => {
             <SimpleForm>
                 <TextInput disabled source="id" />
                 <ReferenceInput source="clienteId" reference="clientes"><SelectInput optionText="name" /></ReferenceInput>
-                <ReferenceInput source="tabelaId" reference="tabeladeprecos" onChange={(event) => {
+                <ReferenceInput label="Preço de venda" source="tabelaId" reference="tabeladeprecos" onChange={(event) => {
                     mudarValorTotal(event);
                     mudarValorFrete(event)
                     mudarValorLucro(event)
                 }} ><SelectInput optionText="name" /></ReferenceInput>
-                <ReferenceInput source="tabelaCompraId" reference="tabeladecompras" onChange={(event) => {
+                <ReferenceInput label="Preço de compra" source="tabelaCompraId" reference="tabeladecompras" onChange={(event) => {
                     mudarValorTotal(event);
                     mudarValorFrete(event)
                     mudarValorLucro(event)
@@ -156,7 +156,7 @@ export const PedidoEdit = props => {
                 }} />
                 <DateInput source="dataVencimentoPedido" options={{ value: dataVencimento }} />
                 <SelectInput source="situacao" defaultChecked={[1]} choices={choices} />
-                <NumberInput source="quant_caixa" />
+                {/* <NumberInput source="quant_caixa" /> */}
                 <NumberInput source="quilo" onChange={(event) => {
                     mudarValorTotal(event);
                     mudarValorFrete(event)
@@ -167,7 +167,7 @@ export const PedidoEdit = props => {
                     mudarValorLucro(event);
                 }} />
                 <NumberInput disabled source="frete" options={{ value: frete }} />
-                <NumberInput disabled source="totalDaNota" options={{ value: totalDaNota }} />
+                <NumberInput disabled label="Total arrecadado" source="totalDaNota" options={{ value: totalDaNota }} />
                 <NumberInput disabled source="valorLucro" options={{ value: valorLucro }} />
             </SimpleForm>
         </Edit>
@@ -178,6 +178,8 @@ export const PedidoCreate = props => {
     const [erro] = useState('');
     const [dataVencimento, setDataVencimento] = useState('');
     const [totalDaNota, setTotalDaNota] = useState(['']);
+    const [totalArrecadado, setTotalArrecadado] = useState(['']);
+    const [pagamentoFornecedor, setPagamentoFornecedor] = useState(['']);
     const [frete, setFrete] = useState(['']);
     const [valorLucro, setValorLucro] = useState(['']);
     useEffect(() => {
@@ -214,6 +216,23 @@ export const PedidoCreate = props => {
         }
     }
 
+    const mudarPagamentoFornecedor = async (event) => {
+        try {
+            if (document.getElementById('clienteId') !== undefined) {
+                var tabelaCompraId = document.getElementsByName('tabelaCompraId')[0].value
+
+                var quilo = document.getElementById('quilo').value;
+                var valorCompra = (await client.get("/tabeladecompras/" + tabelaCompraId)).data.valorCompra;
+                
+                var pagamentoAoForncedor = quilo * (valorCompra)
+                setPagamentoFornecedor(parseFloat(pagamentoAoForncedor.toFixed(2)));
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     const mudarValorTotal = async (event) => {
         try {
             if (document.getElementById('clienteId') !== undefined) {
@@ -222,8 +241,24 @@ export const PedidoCreate = props => {
                 var quilo = document.getElementById('quilo').value;
                 var valorDeVenda = (await client.get("/tabeladeprecos/" + tabelaId)).data.valor;
                 var desconto = document.getElementById('desconto').value;
-                var totalDaNota = quilo * (valorDeVenda - frete_por_quilo) - desconto
+                var totalDaNota = quilo * (valorDeVenda) - desconto
                 setTotalDaNota(parseFloat(totalDaNota.toFixed(2)));
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const mudarValorTotalArrecadado = async (event) => {
+        try {
+            if (document.getElementById('clienteId') !== undefined) {
+                var tabelaId = document.getElementsByName('tabelaId')[0].value
+
+                var quilo = document.getElementById('quilo').value;
+                var valorDeVenda = (await client.get("/tabeladeprecos/" + tabelaId)).data.valor;
+                var totalDaNota = quilo * (valorDeVenda)
+                setTotalArrecadado(parseFloat(totalDaNota.toFixed(2)));
             }
 
         } catch (error) {
@@ -282,19 +317,23 @@ export const PedidoCreate = props => {
                 }} />
                 <DateInput source="dataVencimentoPedido" options={{ value: dataVencimento }} />
                 <SelectInput source="situacao" choices={choices} />
-                <NumberInput source="quant_caixa"/>
                 <NumberInput source="quilo" onChange={(event) => {
+                    mudarPagamentoFornecedor(event);
                     mudarValorTotal(event);
                     mudarValorFrete(event)
                     mudarValorLucro(event)
+                    mudarValorTotalArrecadado(event)
                 }} />
                 <NumberInput source="desconto" onChange={(event) => {
                     mudarValorTotal(event);
                     mudarValorLucro(event);
+                    mudarValorTotalArrecadado(event);
                 }} />
-                <NumberInput disabled source="frete" options={{ value: frete }} />
-                <NumberInput disabled source="totalDaNota" options={{ value: totalDaNota }} />
-                <NumberInput disabled source="valorLucro" options={{ value: valorLucro }} />
+                <NumberInput disabled label="Gastos com frete" source="frete" options={{ value: frete }} />
+                <NumberInput disabled label="Valor pago com fornecedor" source="pagoFornecedor" options={{ value: pagamentoFornecedor }} />
+                <NumberInput disabled label="Valor Total arrecadado" source="totalArrecadado" options={{ value: totalArrecadado }} />
+                <NumberInput disabled label="Valor Total da nota" source="totalDaNota" options={{ value: totalDaNota }} />
+                <NumberInput disabled label="Total lucrado" source="valorLucro" options={{ value: valorLucro }} />
             </SimpleForm>
         </Create>
     );

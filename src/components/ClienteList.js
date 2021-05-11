@@ -1,6 +1,6 @@
 import * as React from "react";
 import { List, Datagrid, TextField, EmailField, NumberField, Create } from 'react-admin';
-import { Edit, SimpleForm, TextInput, NumberInput, DateInput } from 'react-admin';
+import { Edit, SimpleForm, TextInput, NumberInput } from 'react-admin';
 import { Filter, ReferenceInput, SelectInput } from 'react-admin';
 
 export const ClienteList = props => (
@@ -12,9 +12,6 @@ export const ClienteList = props => (
             <TextField source="telefone" />
             <TextField label="Endereço" source="endereco" />
             <NumberField source="diasParaPagar" />
-            {/* <DateField label="Criado em:" source="createdAt" /> */}
-            {/* <DateField source="updatedAt" />
-            <DateField source="deletedAt" /> */}
         </Datagrid>
     </List>
 );
@@ -27,7 +24,7 @@ export const ClienteEdit = props => (
             <TextInput source="telefone" />
             <TextInput source="endereco" />
             <NumberInput source="diasParaPagar" />
-            <DateInput source="createdAt" />
+            {/* <DateInput source="createdAt" /> */}
         </SimpleForm>
     </Edit>
 );
