@@ -5,6 +5,7 @@ import { ClienteEdit, ClienteList, ClienteCreate, } from './components/ClienteLi
 import { TabeladecompraList, TabeladecompraCreate, TabeladecompraEdit } from './components/TabeladecompraList'
 import { TabeladeprecoList, TabeladeprecoEdit, TabeladeprecoCreate } from './components/TabeladeprecoList'
 import { PedidoList, PedidoEdit, PedidoCreate } from './components/PedidoList'
+import { RelatorioList } from './components/Relatorio'
 
 import ptBrMessages from 'ra-language-pt-br';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
@@ -26,6 +27,7 @@ const App = () => (
     <Resource name="tabeladeprecos" options={{ label: 'Tabela de preços' }} list={TabeladeprecoList} edit={TabeladeprecoEdit} create={TabeladeprecoCreate} />
     <Resource name="tabeladecompras" options={{ label: 'Preços de compra' }} list={TabeladecompraList} edit={TabeladecompraEdit} create={TabeladecompraCreate} />
     <Resource name="pedidos" options={{ label: 'Pedidos' }} list={PedidoList} edit={PedidoEdit} create={PedidoCreate} />
+    <Resource name="relatorios" options={{ label: 'Relatorios' }} list={RelatorioList} />
   </Admin>
 );
 export default App;
