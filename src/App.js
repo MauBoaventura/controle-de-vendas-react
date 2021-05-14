@@ -19,7 +19,7 @@ const messages = {
 const i18nProvider = polyglotI18nProvider(locale => messages[locale], 'pt-br');
 
 
-const dataProvider = jsonServerProvider(process.env.NODE_ENV != 'production'?'http://localhost:3035':'https://controledevenda.herokuapp.com/');
+const dataProvider = jsonServerProvider(process.env.NODE_ENV !== 'production'?'http://localhost:3035':'https://controledevenda.herokuapp.com');
 
 const App = () => (
   <Admin dataProvider={dataProvider} loginPage={MyLoginPage} i18nProvider={i18nProvider}>
