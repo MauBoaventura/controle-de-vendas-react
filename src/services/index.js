@@ -2,7 +2,7 @@ import axios from "axios";
 // import { getBaseURL } from "../config";
 
 export const client = axios.create({
-  baseURL: "http://localhost:3035",
+  baseURL: process.env.NODE_ENV !== 'production'?'http://localhost:3035':'https://controledevenda.herokuapp.com',
   headers: {
     "Content-Type": "application/json"
   }
