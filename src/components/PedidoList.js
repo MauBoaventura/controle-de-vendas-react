@@ -5,7 +5,7 @@ import { TextInput, ReferenceInput, SelectInput, DateInput, NumberInput } from '
 import { client } from "../services";
 import { makeStyles, Chip } from '@material-ui/core';
 
-const frete_por_quilo = process.env.frete_por_quilo||0.2;
+const frete_por_quilo = process.env.FRETE_POR_QUILO || 0.2;
 
 const useQuickFilterStyles = makeStyles(theme => ({
     chip: {
@@ -42,139 +42,6 @@ export const PedidoList = props => (
 );
 
 export const PedidoEdit = props => {
-    const [dataVencimento, setDataVencimento] = useState('');
-    const [totalDaNota, setTotalDaNota] = useState(['']);
-    const [frete, setFrete] = useState(['']);
-    const [valorLucro, setValorLucro] = useState(['']);
-    useEffect(() => {
-        async function loadAll() {
-            try {
-                var id = (document.getElementById('id').value)
-                var pedido = (await client.get("/pedidos/" + id));
-                const time = moment(pedido.data.dataVencimentoPedido).format("YYYY-MM-DD");
-                setDataVencimento(time);
-                setFrete(pedido.data.frete)
-                setTotalDaNota(pedido.data.totalDaNota)
-                setValorLucro(pedido.data.valorLucro)
-            } catch (error) {
-                console.error(error)
-            }
-        }
-        loadAll()
-    }, [])
-
-    const mudarDataVencimento = async (event) => {
-        try {
-            if (document.getElementById('clienteId') !== undefined) {
-                var clienteId = document.getElementsByName('clienteId')[0].value
-
-                var diasParaPagar = (await client.get("/clientes/" + clienteId)).data.diasParaPagar;
-
-                var time = moment(event.target.value).add(diasParaPagar || 0, 'days').format("YYYY-MM-DD");
-                setDataVencimento
-                    (time);
-            }
-
-        } catch (error) {
-
-        }
-    }
-
-    const mudarValorTotal = async (event) => {
-        try {
-            if (document.getElementById('clienteId') !== undefined) {
-                var tabelaId = document.getElementsByName('tabelaId')[0].value
-
-                var quilo = document.getElementById('quilo').value;
-                var valorDeVenda = (await client.get("/tabeladeprecos/" + tabelaId)).data.valor;
-                var desconto = document.getElementById('desconto').value;
-                var totalDaNota = quilo * (valorDeVenda - frete_por_quilo) - desconto
-                setTotalDaNota(parseFloat(totalDaNota.toFixed(2)));
-            }
-
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    const mudarValorFrete = async (event) => {
-        try {
-            if (document.getElementById('clienteId') !== undefined) {
-                var quilo = document.getElementById('quilo').value;
-
-                var frete = quilo * frete_por_quilo
-                setFrete(parseFloat(frete.toFixed(2)));
-            }
-
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    const mudarValorLucro = async (event) => {
-        try {
-            if (document.getElementById('clienteId') !== undefined) {
-                var tabelaCompraId = document.getElementsByName('tabelaCompraId')[0].value
-
-                var quilo = document.getElementById('quilo').value;
-                var valorCompra = (await client.get("/tabeladecompras/" + tabelaCompraId)).data.valorCompra;
-                var totalDaNota = document.getElementById('totalDaNota').value;
-
-                var lucro = totalDaNota - (valorCompra * quilo)
-                setValorLucro(parseFloat(lucro.toFixed(2)));
-            }
-
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    const transform = data => ({
-        ...data,
-        dataVencimentoPedido: document.getElementById('dataVencimentoPedido').value,
-        totalDaNota: document.getElementById('totalDaNota').value,
-        valorLucro: document.getElementById('valorLucro').value
-    });
-
-    return (
-        <Edit {...props} transform={transform}>
-            <SimpleForm>
-                <TextInput disabled source="id" />
-                <ReferenceInput source="clienteId" reference="clientes"><SelectInput optionText="name" /></ReferenceInput>
-                <ReferenceInput label="Preço de venda" source="tabelaId" reference="tabeladeprecos" onChange={(event) => {
-                    mudarValorTotal(event);
-                    mudarValorFrete(event)
-                    mudarValorLucro(event)
-                }} ><SelectInput optionText="name" /></ReferenceInput>
-                <ReferenceInput label="Preço de compra" source="tabelaCompraId" reference="tabeladecompras" onChange={(event) => {
-                    mudarValorTotal(event);
-                    mudarValorFrete(event)
-                    mudarValorLucro(event)
-                }} ><SelectInput optionText="name" /></ReferenceInput>
-                <DateInput source="dataPedido" onChange={(event) => {
-                    mudarDataVencimento(event);
-                }} />
-                <DateInput source="dataVencimentoPedido" options={{ value: dataVencimento }} />
-                <SelectInput source="situacao" defaultChecked={[1]} choices={choices} />
-                {/* <NumberInput source="quant_caixa" /> */}
-                <NumberInput source="quilo" onChange={(event) => {
-                    mudarValorTotal(event);
-                    mudarValorFrete(event)
-                    mudarValorLucro(event)
-                }} />
-                <NumberInput source="desconto" onChange={(event) => {
-                    mudarValorTotal(event);
-                    mudarValorLucro(event);
-                }} />
-                <NumberInput disabled source="frete" options={{ value: frete }} />
-                <NumberInput disabled label="Total arrecadado" source="totalDaNota" options={{ value: totalDaNota }} />
-                <NumberInput disabled source="valorLucro" options={{ value: valorLucro }} />
-            </SimpleForm>
-        </Edit>
-    );
-}
-
-export const PedidoCreate = props => {
     const [erro] = useState('');
     const [dataVencimento, setDataVencimento] = useState('');
     const [totalDaNota, setTotalDaNota] = useState(['']);
@@ -196,7 +63,7 @@ export const PedidoCreate = props => {
                 console.error(error)
             }
         }
-            loadAll()
+        loadAll()
     }, [erro])
 
     const mudarDataVencimento = async (event) => {
@@ -207,8 +74,7 @@ export const PedidoCreate = props => {
                 var diasParaPagar = (await client.get("/clientes/" + clienteId)).data.diasParaPagar;
 
                 var time = moment(event.target.value).add(diasParaPagar || 0, 'days').format("YYYY-MM-DD");
-                setDataVencimento
-                    (time);
+                setDataVencimento(time);
             }
 
         } catch (error) {
@@ -223,7 +89,7 @@ export const PedidoCreate = props => {
 
                 var quilo = document.getElementById('quilo').value;
                 var valorCompra = (await client.get("/tabeladecompras/" + tabelaCompraId)).data.valorCompra;
-                
+
                 var pagamentoAoForncedor = quilo * (valorCompra)
                 setPagamentoFornecedor(parseFloat(pagamentoAoForncedor.toFixed(2)));
             }
@@ -302,13 +168,191 @@ export const PedidoCreate = props => {
         ...data,
         dataVencimentoPedido: document.getElementById('dataVencimentoPedido').value,
         totalDaNota: document.getElementById('totalDaNota').value,
+        valorLucro: document.getElementById('valorLucro').value,
+        frete: document.getElementById('frete').value,
+        desconto: document.getElementById('desconto').value
+    });
+
+    return (
+        <Edit {...props} transform={transform}>
+            <SimpleForm>
+                <TextInput disabled source="id" />
+                <ReferenceInput source="clienteId" reference="clientes"><SelectInput optionText="name" /></ReferenceInput>
+                <ReferenceInput label="Preço de venda" source="tabelaId" reference="tabeladeprecos" onChange={(event) => {
+                    mudarValorTotal(event);
+                    mudarValorFrete(event)
+                    mudarValorLucro(event)
+                }} ><SelectInput optionText="name" /></ReferenceInput>
+                <ReferenceInput label="Preço de compra" source="tabelaCompraId" reference="tabeladecompras" onChange={(event) => {
+                    mudarValorTotal(event);
+                    mudarValorFrete(event)
+                    mudarValorLucro(event)
+                }} ><SelectInput optionText="name" /></ReferenceInput>
+                <DateInput source="dataPedido" onChange={(event) => {
+                    mudarDataVencimento(event);
+                }} />
+                <DateInput source="dataVencimentoPedido" options={{ value: dataVencimento }} />
+                <SelectInput source="situacao" defaultChecked={[1]} choices={choices} />
+                {/* <NumberInput source="quant_caixa" /> */}
+                <NumberInput source="quilo" onChange={(event) => {
+                    mudarPagamentoFornecedor(event);
+                    mudarValorTotal(event);
+                    mudarValorFrete(event)
+                    mudarValorLucro(event)
+                    mudarValorTotalArrecadado(event)
+                }} />
+                <NumberInput source="desconto" onChange={(event) => {
+                    mudarValorTotal(event);
+                    mudarValorLucro(event);
+                    mudarValorTotalArrecadado(event);
+                }} />
+                <NumberInput disabled label="Gastos com frete" source="frete" options={{ value: parseFloat(frete) }} />
+                <NumberInput disabled label="Valor pago com fornecedor" source="pagoFornecedor" options={{ value: parseFloat(pagamentoFornecedor) }} />
+                <NumberInput disabled label="Valor Total arrecadado" source="totalArrecadado" options={{ value: parseFloat(totalArrecadado) }} />
+                <NumberInput disabled label="Valor Total da nota" source="totalDaNota" options={{ value: parseFloat(totalDaNota) }} />
+                <NumberInput disabled label="Total lucrado" source="valorLucro" options={{ value: parseFloat(valorLucro) }} />
+            </SimpleForm>
+        </Edit>
+    );
+}
+
+export const PedidoCreate = props => {
+    const [erro] = useState('');
+    const [dataVencimento, setDataVencimento] = useState('');
+    const [totalDaNota, setTotalDaNota] = useState(['']);
+    const [totalArrecadado, setTotalArrecadado] = useState(['']);
+    const [pagamentoFornecedor, setPagamentoFornecedor] = useState(['']);
+    const [frete, setFrete] = useState(['']);
+    const [valorLucro, setValorLucro] = useState(['']);
+    useEffect(() => {
+        async function loadAll() {
+            try {
+                var id = (document.getElementById('id').value)
+                var pedido = (await client.get("/pedidos/" + id));
+                const time = moment(pedido.data.dataVencimentoPedido).format("YYYY-MM-DD");
+                setDataVencimento(time);
+                setFrete(pedido.data.frete)
+                setTotalDaNota(pedido.data.totalDaNota)
+                setValorLucro(pedido.data.valorLucro)
+            } catch (error) {
+                console.error(error)
+            }
+        }
+        loadAll()
+    }, [erro])
+
+    const mudarDataVencimento = async (event) => {
+        try {
+            if (document.getElementById('clienteId') !== undefined) {
+                var clienteId = document.getElementsByName('clienteId')[0].value
+
+                var diasParaPagar = (await client.get("/clientes/" + clienteId)).data.diasParaPagar;
+
+                var time = moment(event.target.value).add(diasParaPagar || 0, 'days').format("YYYY-MM-DD");
+                setDataVencimento(time);
+            }
+
+        } catch (error) {
+
+        }
+    }
+
+    const mudarPagamentoFornecedor = async (event) => {
+        try {
+            if (document.getElementById('clienteId') !== undefined) {
+                var tabelaCompraId = document.getElementsByName('tabelaCompraId')[0].value
+
+                var quilo = document.getElementById('quilo').value;
+                var valorCompra = (await client.get("/tabeladecompras/" + tabelaCompraId)).data.valorCompra;
+
+                var pagamentoAoForncedor = quilo * (valorCompra)
+                setPagamentoFornecedor(parseFloat(pagamentoAoForncedor.toFixed(2)));
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const mudarValorTotal = async (event) => {
+        try {
+            if (document.getElementById('clienteId') !== undefined) {
+                var tabelaId = document.getElementsByName('tabelaId')[0].value
+
+                var quilo = document.getElementById('quilo').value;
+                var valorDeVenda = (await client.get("/tabeladeprecos/" + tabelaId)).data.valor;
+                var desconto = document.getElementById('desconto').value;
+                var totalDaNota = quilo * (valorDeVenda) - desconto
+                setTotalDaNota(parseFloat(totalDaNota.toFixed(2)));
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const mudarValorTotalArrecadado = async (event) => {
+        try {
+            if (document.getElementById('clienteId') !== undefined) {
+                var tabelaId = document.getElementsByName('tabelaId')[0].value
+
+                var quilo = document.getElementById('quilo').value;
+                var valorDeVenda = (await client.get("/tabeladeprecos/" + tabelaId)).data.valor;
+                var totalDaNota = quilo * (valorDeVenda)
+                setTotalArrecadado(parseFloat(totalDaNota.toFixed(2)));
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const mudarValorFrete = async (event) => {
+        try {
+            if (document.getElementById('clienteId') !== undefined) {
+                var quilo = document.getElementById('quilo').value;
+
+                var frete = quilo * frete_por_quilo
+                setFrete(parseFloat(frete.toFixed(2)));
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const mudarValorLucro = async (event) => {
+        try {
+            if (document.getElementById('clienteId') !== undefined) {
+                var tabelaCompraId = document.getElementsByName('tabelaCompraId')[0].value
+
+                var quilo = document.getElementById('quilo').value;
+                var valorCompra = (await client.get("/tabeladecompras/" + tabelaCompraId)).data.valorCompra;
+                var totalDaNota = document.getElementById('totalDaNota').value;
+
+                var lucro = totalDaNota - (valorCompra * quilo)
+                setValorLucro(parseFloat(lucro.toFixed(2)));
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const transform = data => ({
+        ...data,
+        dataVencimentoPedido: document.getElementById('dataVencimentoPedido').value,
+        totalDaNota: document.getElementById('totalDaNota').value,
+        pagoFornecedor: document.getElementById('pagoFornecedor').value,
+        frete: document.getElementById('frete').value,
+        totalArrecadado: document.getElementById('totalArrecadado').value,
         valorLucro: document.getElementById('valorLucro').value
     });
 
     return (
         <Create {...props} transform={transform}>
             <SimpleForm>
-                <TextInput disabled source="id" />
+                {/* <TextInput disabled source="id" /> */}
                 <ReferenceInput source="clienteId" reference="clientes"><SelectInput optionText="name" /></ReferenceInput>
                 <ReferenceInput label="Preço de venda" source="tabelaId" reference="tabeladeprecos"><SelectInput optionText="name" /></ReferenceInput>
                 <ReferenceInput label="Preço de compra" source="tabelaCompraId" reference="tabeladecompras"><SelectInput optionText="name" /></ReferenceInput>
@@ -329,11 +373,11 @@ export const PedidoCreate = props => {
                     mudarValorLucro(event);
                     mudarValorTotalArrecadado(event);
                 }} />
-                <NumberInput disabled label="Gastos com frete" source="frete" options={{ value: frete }} />
-                <NumberInput disabled label="Valor pago com fornecedor" source="pagoFornecedor" options={{ value: pagamentoFornecedor }} />
-                <NumberInput disabled label="Valor Total arrecadado" source="totalArrecadado" options={{ value: totalArrecadado }} />
-                <NumberInput disabled label="Valor Total da nota" source="totalDaNota" options={{ value: totalDaNota }} />
-                <NumberInput disabled label="Total lucrado" source="valorLucro" options={{ value: valorLucro }} />
+                <NumberInput disabled label="Gastos com frete" source="frete" options={{ value: parseFloat(frete) }} />
+                <NumberInput disabled label="Valor pago com fornecedor" source="pagoFornecedor" options={{ value: parseFloat(pagamentoFornecedor) }} />
+                <NumberInput disabled label="Valor Total arrecadado" source="totalArrecadado" options={{ value: parseFloat(totalArrecadado) }} />
+                <NumberInput disabled label="Valor Total da nota" source="totalDaNota" options={{ value: parseFloat(totalDaNota) }} />
+                <NumberInput disabled label="Total lucrado" source="valorLucro" options={{ value: parseFloat(valorLucro) }} />
             </SimpleForm>
         </Create>
     );
