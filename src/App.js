@@ -24,8 +24,8 @@ const dataProvider = jsonServerProvider(process.env.NODE_ENV !== 'production'?'h
 const App = () => (
   <Admin dataProvider={dataProvider} loginPage={MyLoginPage} i18nProvider={i18nProvider}>
     <Resource name="clientes" options={{ label: 'Clientes' }} list={ClienteList} edit={ClienteEdit} create={ClienteCreate} />
-    <Resource name="tabeladeprecos" options={{ label: 'Tabela de preços' }} list={TabeladeprecoList} edit={TabeladeprecoEdit} create={TabeladeprecoCreate} />
-    <Resource name="tabeladecompras" options={{ label: 'Preços de compra' }} list={TabeladecompraList} edit={TabeladecompraEdit} create={TabeladecompraCreate} />
+    <Resource name="tabeladeprecos" options={{ label: 'Valor de venda' }} list={TabeladeprecoList} edit={TabeladeprecoEdit} create={TabeladeprecoCreate} />
+    <Resource name="tabeladecompras" options={{ label: 'Valor de compra' }} list={TabeladecompraList} edit={TabeladecompraEdit} create={TabeladecompraCreate} />
     <Resource name="pedidos" options={{ label: 'Pedidos' }} list={PedidoList} edit={PedidoEdit} create={PedidoCreate} />
     <Resource name="relatorios" options={{ label: 'Relatorios' }} list={RelatorioList} />
   </Admin>
