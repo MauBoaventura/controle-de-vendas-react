@@ -24,20 +24,22 @@ const choices = [{ id: 'PAGO', name: 'PAGO' }, { id: 'ABRT', name: 'ABRT' }, { i
 
 export const PedidoList = props => (
     <List filters={<PedidoFilter />}{...props}>
+        <div className="testee">
         <Datagrid rowClick="edit">
-            <DateField label="Data do pedido" source="dataPedido" />
+            <DateField label="Data do pedido" source="dataPedido" options={{ timeZone: 'UTC' }}/>
             <ChipField source="situacao" />
             <ReferenceField source="clienteId" reference="clientes"><TextField source="name" /></ReferenceField>
-            <ReferenceField label="Preço de compra" source="tabelaCompraId" reference="tabeladecompras"><TextField source="valorCompra" /></ReferenceField>
-            <DateField source="dataVencimentoPedido" />
-            <NumberField label="Volumes" source="quant_caixa" />
+            <ReferenceField label="Preço de compra" source="tabelaCompraId" reference="tabeladecompras"><TextField source="name" /></ReferenceField>
+            <ReferenceField label="Preço de venda" source="tabelaId" reference="tabeladeprecos"><TextField source="name" /></ReferenceField>
+            <DateField source="dataVencimentoPedido" options={{ timeZone: 'UTC' }}/>
             <NumberField label="Quilos" source="quilo" />
-            <ReferenceField label="Preço de venda" source="tabelaId" reference="tabeladeprecos"><TextField source="valor" /></ReferenceField>
+            <NumberField label="Desconto" source="desconto" />
             {/* <NumberField source="desconto" /> */}
             {/* <NumberField source="frete" /> */}
             <NumberField source="totalDaNota" />
             <NumberField source="valorLucro" />
         </Datagrid>
+        </div>
     </List>
 );
 
@@ -152,16 +154,18 @@ export const PedidoEdit = props => {
 
     const mudarValorLucro = async (event) => {
         try {
-            if (document.getElementById('clienteId') !== undefined) {
-                var tabelaCompraId = document.getElementsByName('tabelaCompraId')[0].value
+            var tabelaCompraId = document.getElementsByName('tabelaCompraId')[0].value
+            var tabelaId = document.getElementsByName('tabelaId')[0].value
 
-                var quilo = document.getElementById('quilo').value;
-                var valorCompra = (await client.get("/tabeladecompras/" + tabelaCompraId)).data.valorCompra;
-                var totalDaNota = document.getElementById('totalDaNota').value;
+            var quilo = document.getElementById('quilo').value;
+            var valorCompra = (await client.get("/tabeladecompras/" + tabelaCompraId)).data.valorCompra;
 
-                var lucro = totalDaNota - (valorCompra * quilo)
-                setValorLucro(parseFloat(lucro.toFixed(2)));
-            }
+            var valorDeVenda = (await client.get("/tabeladeprecos/" + tabelaId)).data.valor;
+            var desconto = document.getElementById('desconto').value;
+            var totalDaNota = quilo * (valorDeVenda) - desconto
+
+            var lucro = totalDaNota - (valorCompra * quilo)
+            setValorLucro(parseFloat(lucro.toFixed(2)));
 
         } catch (error) {
             console.log(error)
@@ -223,12 +227,12 @@ export const PedidoEdit = props => {
                     mudarValorTotalArrecadado(event)
                 }} />
                 <NumberInput label="Desconto em kg" source="quilo_desconto" onChange={(event) => {
+                    mudarDesconto(event);
                     mudarValorTotal(event);
                     mudarValorLucro(event);
                     mudarValorTotalArrecadado(event);
-                    mudarDesconto(event);
                 }} />
-                <NumberInput disabled label="Valor final desconto" source="desconto" options={{ value: parseFloat(desconto) }} />
+                <NumberInput disabled label="Desconto em reais" source="desconto" options={{ value: parseFloat(desconto) }} />
                 <NumberInput disabled label="Gastos com frete" source="frete" options={{ value: parseFloat(frete) }} />
                 <NumberInput disabled label="Valor pago com fornecedor" source="pagoFornecedor" options={{ value: parseFloat(pagamentoFornecedor) }} />
                 <NumberInput disabled label="Valor Total arrecadado" source="totalArrecadado" options={{ value: parseFloat(totalArrecadado) }} />
@@ -240,7 +244,7 @@ export const PedidoEdit = props => {
 }
 
 export const PedidoCreate = props => {
-    const [erro] = useState('');
+    // const [erro] = useState('');
     const [dataVencimento, setDataVencimento] = useState('');
     const [totalDaNota, setTotalDaNota] = useState(['']);
     const [totalArrecadado, setTotalArrecadado] = useState(['']);
@@ -248,22 +252,22 @@ export const PedidoCreate = props => {
     const [desconto, setDesconto] = useState(['']);
     const [frete, setFrete] = useState(['']);
     const [valorLucro, setValorLucro] = useState(['']);
-    useEffect(() => {
-        async function loadAll() {
-            try {
-                var id = (document.getElementById('id').value)
-                var pedido = (await client.get("/pedidos/" + id));
-                const time = moment(pedido.data.dataVencimentoPedido).format("YYYY-MM-DD");
-                setDataVencimento(time);
-                setFrete(pedido.data.frete)
-                setTotalDaNota(pedido.data.totalDaNota)
-                setValorLucro(pedido.data.valorLucro)
-            } catch (error) {
-                console.error(error)
-            }
-        }
-        loadAll()
-    }, [erro])
+    // useEffect(() => {
+    //     async function loadAll() {
+    //         try {
+    //             var id = (document.getElementById('id').value)
+    //             var pedido = (await client.get("/pedidos/" + id));
+    //             const time = moment(pedido.data.dataVencimentoPedido).format("YYYY-MM-DD");
+    //             setDataVencimento(time);
+    //             setFrete(pedido.data.frete)
+    //             setTotalDaNota(pedido.data.totalDaNota)
+    //             setValorLucro(pedido.data.valorLucro)
+    //         } catch (error) {
+    //             console.error(error)
+    //         }
+    //     }
+    //     loadAll()
+    // }, [erro])
 
     const mudarDataVencimento = async (event) => {
         try {
@@ -347,16 +351,18 @@ export const PedidoCreate = props => {
 
     const mudarValorLucro = async (event) => {
         try {
-            if (document.getElementById('clienteId') !== undefined) {
-                var tabelaCompraId = document.getElementsByName('tabelaCompraId')[0].value
+            var tabelaCompraId = document.getElementsByName('tabelaCompraId')[0].value
+            var tabelaId = document.getElementsByName('tabelaId')[0].value
 
-                var quilo = document.getElementById('quilo').value;
-                var valorCompra = (await client.get("/tabeladecompras/" + tabelaCompraId)).data.valorCompra;
-                var totalDaNota = document.getElementById('totalDaNota').value;
+            var quilo = document.getElementById('quilo').value;
+            var valorCompra = (await client.get("/tabeladecompras/" + tabelaCompraId)).data.valorCompra;
 
-                var lucro = totalDaNota - (valorCompra * quilo)
-                setValorLucro(parseFloat(lucro.toFixed(2)));
-            }
+            var valorDeVenda = (await client.get("/tabeladeprecos/" + tabelaId)).data.valor;
+            var desconto = document.getElementById('desconto').value;
+            var totalDaNota = quilo * (valorDeVenda) - desconto
+
+            var lucro = totalDaNota - (valorCompra * quilo)
+            setValorLucro(parseFloat(lucro.toFixed(2)));
 
         } catch (error) {
             console.log(error)
@@ -387,7 +393,8 @@ export const PedidoCreate = props => {
         pagoFornecedor: document.getElementById('pagoFornecedor').value,
         frete: document.getElementById('frete').value,
         totalArrecadado: document.getElementById('totalArrecadado').value,
-        valorLucro: document.getElementById('valorLucro').value
+        valorLucro: document.getElementById('valorLucro').value,
+        desconto: document.getElementById('desconto').value
     });
 
     return (
@@ -413,9 +420,8 @@ export const PedidoCreate = props => {
                     mudarDesconto(event);
                     mudarValorTotal(event);
                     mudarValorLucro(event);
-                    mudarValorTotalArrecadado(event);
                 }} />
-                <NumberInput disabled label="Valor final desconto" source="desconto" options={{ value: parseFloat(desconto) }} />
+                <NumberInput disabled label="Desconto em reais" source="desconto" options={{ value: parseFloat(desconto) }} />
                 <NumberInput disabled label="Gastos com frete" source="frete" options={{ value: parseFloat(frete) }} />
                 <NumberInput disabled label="Valor pago com fornecedor" source="pagoFornecedor" options={{ value: parseFloat(pagamentoFornecedor) }} />
                 <NumberInput disabled label="Valor Total arrecadado" source="totalArrecadado" options={{ value: parseFloat(totalArrecadado) }} />
