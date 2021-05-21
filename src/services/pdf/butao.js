@@ -14,28 +14,32 @@ const relatorioListaCobrancaDiaria = async () => {
     // Depois fazer uma consulta e jogar o processamento para a API
     var pedido = (await client.get("/relatorioDiario"));
     var data_hoje = moment().format("YYYY-MM-DD")
-    
+
     var pedidos_vencendo_hoje = pedido.data.filter((element) => {
         let diaVencimento = moment(element.dataVencimentoPedido).format("YYYY-MM-DD")
         // console.log(diaVencimento)
         // console.log(diaVencimento === data_atual)
         return diaVencimento === data_hoje;
+    }).map((el) => {
+        el.quilo = el.quilo.toLocaleString('pt-BR', { style: 'decimal'})+ ' kg';
+        el.valor = el.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        el.desconto = el.desconto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        el.totalDaNota = el.totalDaNota.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        el.dataVencimentoPedido = moment(el.dataVencimentoPedido).format("DD-MM-YYYY")
+        el.dataPedido = moment(el.dataPedido).format("DD-MM-YYYY")
+        return el
     });
 
     if (pedidos_vencendo_hoje.length > 0) {
-        console.log(pedidos_vencendo_hoje)
-    }else{
+        const classeImpressao = new Impressao(pedidos_vencendo_hoje);
+        const documento = await classeImpressao.PreparaDocumento();
+        pdfMake.createPdf(documento)
+            // .download();
+            .open({}, window.open('', '_blank'));
+        // .print();
+    } else {
         console.error("Não ha pedidos vencendo hoje");
     }
-    
-
-
-    const classeImpressao = new Impressao(pedidos_vencendo_hoje);
-    const documento = await classeImpressao.PreparaDocumento();
-    pdfMake.createPdf(documento)
-    // .download();
-    .open({}, window.open('', '_blank'));
-    // .print();
 }
 
 function Butao(props) {
@@ -49,6 +53,5 @@ function Butao(props) {
     </>
     )
 }
-
 
 export default Butao;

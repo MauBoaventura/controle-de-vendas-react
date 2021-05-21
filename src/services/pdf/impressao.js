@@ -15,14 +15,19 @@ export class Impressao {
     const header = [
       { text: 'Nome Cliente', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
       { text: 'Quilos', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
-      { text: 'Frete', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
-      // { text: 'totalDaNota', bold: true, fontSize: 9, margin: [0, 4, 0, 0] }
-      // { text: 'Data do pedido', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
-      // { text: 'Data do Vencimento', bold: true, fontSize: 9, margin: [0, 4, 0, 0] }
+      { text: 'Preço/Kg', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
+      { text: 'Desconto', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
+      { text: 'Total da nota', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
+      { text: 'Data do pedido', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
+      { text: 'Data do Vencimento', bold: true, fontSize: 9, margin: [0, 4, 0, 0] }
     ];
     const body = this.dadosParaImpressao.map((prod) => {
       return [
         { text: prod.name, fontSize: 8 },
+        { text: prod.quilo, fontSize: 8 },
+        { text: prod.valor, fontSize: 8 },
+        { text: prod.desconto, fontSize: 8 },
+        { text: prod.totalDaNota, fontSize: 8 },
         { text: prod.dataPedido, fontSize: 8 },
         { text: prod.dataVencimentoPedido, fontSize: 8 },
       ];
@@ -34,7 +39,7 @@ export class Impressao {
           '__________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________',
         alignment: 'center',
         fontSize: 5,
-        colSpan: 3,
+        colSpan: 7,
       },
       {},
       {},
@@ -57,7 +62,7 @@ export class Impressao {
             widths: ['*'],
             body: [
               [
-                { text: 'RELATÓRIO DE VENDAS', style: 'reportName' }
+                { text: 'RELATÓRIO DE COBRANÇA DIARIA', style: 'reportName' }
               ]
             ],
           },
@@ -68,7 +73,7 @@ export class Impressao {
           layout: 'noBorders',
           table: {
             headerRows: 1,
-            widths: ['*', 55, 55],
+            widths: [150, 50,50,50,100,50,70],
 
             body: corpoDocumento
           }
@@ -99,9 +104,9 @@ export class Impressao {
                     margin: [3, 0],
                   },
                   {
-                    text: '© Lojinha de TI',
+                    text: '© MauBoa_Softwares',
                     fontSize: 7,
-                    alignment: 'center',
+                    alignment: 'left',
                   },
                 ],
               ],
