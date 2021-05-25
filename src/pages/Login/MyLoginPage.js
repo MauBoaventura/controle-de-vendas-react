@@ -12,6 +12,8 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import { useLogin, useNotify, Notification } from 'react-admin';
+import { client } from "../../services/index";
 
 function Copyright() {
     return (
@@ -50,12 +52,24 @@ export default function SignIn({history}) {
     const classes = useStyles();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const login = useLogin();
+    const notify = useNotify();
 
     async function handleSubmit(event) {
         event.preventDefault();
+        login({ email, password }).catch(() =>
+            notify('Invalid email or password')
+        );
+
+
         try {
             console.log(email)
             console.log(password)
+            var response = await client.post('/login')
+            if (response.status < 200 || response.status >= 300) {
+                throw new Error(response.statusText);
+            }
+            return response.json();
         } catch (error) {
             console.log(error)
         }
@@ -124,6 +138,7 @@ export default function SignIn({history}) {
                         </Grid>
                     </Grid>
                 </form>
+                <Notification />
             </div>
             <Box mt={8}>
                 <Copyright />
