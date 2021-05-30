@@ -1,7 +1,8 @@
 export default {
     login: async ({ email, password }) => {
         console.log('Entrou')
-        const request = new Request(process.env.NODE_ENV !== 'production' ? 'http://localhost:3035/login' : 'https://controledevenda.herokuapp.com/login', {
+        const request = new Request(process.env.NODE_ENV !== 'production' ? 'http://localhost:3035/login' : 'http://159.203.189.155/login', {
+        // const request = new Request(process.env.NODE_ENV !== 'production' ? 'http://localhost:3035/login' : 'https://controledevenda.herokuapp.com/login', {
             method: 'POST',
             body: JSON.stringify({ email, password }),
             headers: new Headers({ 'Content-Type': 'application/json' }),

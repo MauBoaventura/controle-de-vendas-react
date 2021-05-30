@@ -38,6 +38,11 @@ const relatorioListaCobrancaDiaria = async () => {
             .open({}, window.open('', '_blank'));
         // .print();
     } else {
+        const classeImpressao = new Impressao(pedidos_vencendo_hoje);
+        const documento = await classeImpressao.PreparaDocumento();
+        pdfMake.createPdf(documento)
+            // .download();
+            .open({}, window.open('', '_blank'));
         console.error("Não ha pedidos vencendo hoje");
     }
 }

@@ -235,8 +235,8 @@ export const PedidoEdit = props => {
                 <NumberInput disabled label="Desconto em reais" source="desconto" options={{ value: parseFloat(desconto) }} />
                 <NumberInput disabled label="Gastos com frete" source="frete" options={{ value: parseFloat(frete) }} />
                 <NumberInput disabled label="Valor pago com fornecedor" source="pagoFornecedor" options={{ value: parseFloat(pagamentoFornecedor) }} />
-                <NumberInput disabled label="Valor Total arrecadado" source="totalArrecadado" options={{ value: parseFloat(totalArrecadado) }} />
-                <NumberInput disabled label="Valor Total da nota" source="totalDaNota" options={{ value: parseFloat(totalDaNota) }} />
+                <NumberInput disabled label="Total de sem desconto" source="totalArrecadado" options={{ value: parseFloat(totalArrecadado) }} />
+                <NumberInput disabled label="Valor total recebido" source="totalDaNota" options={{ value: parseFloat(totalDaNota) }} />
                 <NumberInput disabled label="Total lucrado" source="valorLucro" options={{ value: parseFloat(valorLucro) }} />
             </SimpleForm>
         </Edit>
@@ -424,8 +424,8 @@ export const PedidoCreate = props => {
                 <NumberInput disabled label="Desconto em reais" source="desconto" options={{ value: parseFloat(desconto) }} />
                 <NumberInput disabled label="Gastos com frete" source="frete" options={{ value: parseFloat(frete) }} />
                 <NumberInput disabled label="Valor pago com fornecedor" source="pagoFornecedor" options={{ value: parseFloat(pagamentoFornecedor) }} />
-                <NumberInput disabled label="Valor Total arrecadado" source="totalArrecadado" options={{ value: parseFloat(totalArrecadado) }} />
-                <NumberInput disabled label="Valor Total da nota" source="totalDaNota" options={{ value: parseFloat(totalDaNota) }} />
+                <NumberInput disabled label="Total de sem desconto" source="totalArrecadado" options={{ value: parseFloat(totalArrecadado) }} />
+                <NumberInput disabled label="Valor total recebido" source="totalDaNota" options={{ value: parseFloat(totalDaNota) }} />
                 <NumberInput disabled label="Total lucrado" source="valorLucro" options={{ value: parseFloat(valorLucro) }} />
             </SimpleForm>
         </Create>
