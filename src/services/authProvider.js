@@ -1,7 +1,7 @@
 export default {
     login: async ({ email, password }) => {
         console.log('Entrou')
-        const request = new Request(process.env.NODE_ENV !== 'production' ? 'http://localhost:3035/login' : 'http://mauboa.com.br/login', {
+        const request = new Request(process.env.NODE_ENV !== 'production' ? 'http://localhost:3035/login' : 'https://mauboa.com.br/login', {
         // const request = new Request(process.env.NODE_ENV !== 'production' ? 'http://localhost:3035/login' : 'https://controledevenda.herokuapp.com/login', {
             method: 'POST',
             body: JSON.stringify({ email, password }),
