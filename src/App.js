@@ -20,7 +20,7 @@ const messages = {
 const i18nProvider = polyglotI18nProvider(locale => messages[locale], 'pt-br');
 
 
-const dataProvider = jsonServerProvider(process.env.NODE_ENV !== 'production'?'http://localhost:3035':'http://159.203.189.155:3035');
+const dataProvider = jsonServerProvider(process.env.NODE_ENV !== 'production'?'http://localhost:3035':'http://mauboa.com.br');
 // const dataProvider = jsonServerProvider(process.env.NODE_ENV !== 'production'?'http://localhost:3035':'https://controledevenda.herokuapp.com');
 
 const App = () => (
