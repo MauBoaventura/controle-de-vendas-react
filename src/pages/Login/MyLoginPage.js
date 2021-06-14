@@ -13,7 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { useLogin, useNotify, Notification } from 'react-admin';
-import { client } from "../../services/index";
+// import { client } from "../../services/index";
 
 function Copyright() {
     return (
@@ -60,19 +60,6 @@ export default function SignIn({history}) {
         login({ email, password }).catch(() =>
             notify('Invalid email or password')
         );
-
-
-        try {
-            console.log(email)
-            console.log(password)
-            var response = await client.post('/login')
-            if (response.status < 200 || response.status >= 300) {
-                throw new Error(response.statusText);
-            }
-            return response.json();
-        } catch (error) {
-            console.log(error)
-        }
         history.push('/')
     }
     return (
