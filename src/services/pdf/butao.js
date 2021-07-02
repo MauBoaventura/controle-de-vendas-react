@@ -8,9 +8,7 @@ import { Link } from 'react-router-dom';
 import IconReport from '../../assets/iconRelatorio.png';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
-import Select from '@material-ui/core/Select';
 import NativeSelect from '@material-ui/core/NativeSelect';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 
@@ -33,110 +31,110 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const relatorioListaCobrancaDiaria = async () => {
+// const relatorioListaCobrancaDiaria = async () => {
 
-    //Buscar dados da API 
-    // Depois fazer uma consulta e jogar o processamento para a API
-    var pedido = (await client.get("/relatorioVencimentoDiario"));
-    var data_hoje = moment().format("YYYY-MM-DD")
+//     //Buscar dados da API 
+//     // Depois fazer uma consulta e jogar o processamento para a API
+//     var pedido = (await client.get("/relatorioVencimentoDiario"));
+//     var data_hoje = moment().format("YYYY-MM-DD")
 
-    var pedidos_vencendo_hoje = pedido.data.filter((element) => {
-        let diaVencimento = moment(element.dataVencimentoPedido).format("YYYY-MM-DD")
-        return diaVencimento === data_hoje;
-    }).map((el) => {
-        el.quilo = el.quilo.toLocaleString('pt-BR', { style: 'decimal' }) + ' kg';
-        el.valor = el.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        el.desconto = el.desconto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        el.totalDaNota = el.totalDaNota.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        el.dataVencimentoPedido = moment(el.dataVencimentoPedido).format("DD-MM-YYYY")
-        el.dataPedido = moment(el.dataPedido).format("DD-MM-YYYY")
-        return el
-    });
+//     var pedidos_vencendo_hoje = pedido.data.filter((element) => {
+//         let diaVencimento = moment(element.dataVencimentoPedido).format("YYYY-MM-DD")
+//         return diaVencimento === data_hoje;
+//     }).map((el) => {
+//         el.quilo = el.quilo.toLocaleString('pt-BR', { style: 'decimal' }) + ' kg';
+//         el.valor = el.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+//         el.desconto = el.desconto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+//         el.totalDaNota = el.totalDaNota.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+//         el.dataVencimentoPedido = moment(el.dataVencimentoPedido).format("DD-MM-YYYY")
+//         el.dataPedido = moment(el.dataPedido).format("DD-MM-YYYY")
+//         return el
+//     });
 
-    if (pedidos_vencendo_hoje.length > 0) {
-        const classeImpressao = new Impressao(pedidos_vencendo_hoje);
-        const documento = await classeImpressao.PreparaDocumento();
-        pdfMake.createPdf(documento)
-            // .download();
-            .open({}, window.open('', '_blank'));
-        // .print();
-    } else {
-        const classeImpressao = new Impressao(pedidos_vencendo_hoje);
-        const documento = await classeImpressao.PreparaDocumento();
-        pdfMake.createPdf(documento)
-            // .download();
-            .open({}, window.open('', '_blank'));
-        console.error("Não ha pedidos vencendo hoje");
-    }
-}
+//     if (pedidos_vencendo_hoje.length > 0) {
+//         const classeImpressao = new Impressao(pedidos_vencendo_hoje);
+//         const documento = await classeImpressao.relatorioVencimentoDiario();
+//         pdfMake.createPdf(documento)
+//             // .download();
+//             .open({}, window.open('', '_blank'));
+//         // .print();
+//     } else {
+//         const classeImpressao = new Impressao(pedidos_vencendo_hoje);
+//         const documento = await classeImpressao.relatorioVencimentoDiario();
+//         pdfMake.createPdf(documento)
+//             // .download();
+//             .open({}, window.open('', '_blank'));
+//         console.error("Não ha pedidos vencendo hoje");
+//     }
+// }
 
-const relatorioListaPedidosDoDia = async () => {
+// const relatorioListaPedidosDoDia = async () => {
 
-    //Buscar dados da API 
-    // Depois fazer uma consulta e jogar o processamento para a API
-    var pedido = (await client.get("/relatorioPedidosDiario"));
-    console.log(pedido);
+//     //Buscar dados da API 
+//     // Depois fazer uma consulta e jogar o processamento para a API
+//     var pedido = (await client.get("/relatorioPedidosDiario"));
+//     console.log(pedido);
 
-    var pedidos_feitos_hoje = pedido.data.map((el) => {
-        el.quilo = el.quilo.toLocaleString('pt-BR', { style: 'decimal' }) + ' kg';
-        el.valor = el.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        el.desconto = el.desconto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        el.totalDaNota = el.totalDaNota.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        el.dataVencimentoPedido = moment(el.dataVencimentoPedido).format("DD-MM-YYYY")
-        el.dataPedido = moment(el.dataPedido).format("DD-MM-YYYY")
-        return el
-    });
+//     var pedidos_feitos_hoje = pedido.data.map((el) => {
+//         el.quilo = el.quilo.toLocaleString('pt-BR', { style: 'decimal' }) + ' kg';
+//         el.valor = el.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+//         el.desconto = el.desconto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+//         el.totalDaNota = el.totalDaNota.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+//         el.dataVencimentoPedido = moment(el.dataVencimentoPedido).format("DD-MM-YYYY")
+//         el.dataPedido = moment(el.dataPedido).format("DD-MM-YYYY")
+//         return el
+//     });
 
-    if (pedidos_feitos_hoje.length > 0) {
-        const classeImpressao = new Impressao(pedidos_feitos_hoje);
-        const documento = await classeImpressao.PreparaDocumento();
-        pdfMake.createPdf(documento)
-            // .download();
-            .open({}, window.open('', '_blank'));
-        // .print();
-    } else {
-        const classeImpressao = new Impressao(pedidos_feitos_hoje);
-        const documento = await classeImpressao.PreparaDocumento();
-        pdfMake.createPdf(documento)
-            // .download();
-            .open({}, window.open('', '_blank'));
-        console.error("Não ha pedidos feitos hoje");
-    }
-}
+//     if (pedidos_feitos_hoje.length > 0) {
+//         const classeImpressao = new Impressao(pedidos_feitos_hoje);
+//         const documento = await classeImpressao.relatorioListaPedidosDoDia();
+//         pdfMake.createPdf(documento)
+//             // .download();
+//             .open({}, window.open('', '_blank'));
+//         // .print();
+//     } else {
+//         const classeImpressao = new Impressao(pedidos_feitos_hoje);
+//         const documento = await classeImpressao.relatorioListaPedidosDoDia();
+//         pdfMake.createPdf(documento)
+//             // .download();
+//             .open({}, window.open('', '_blank'));
+//         console.error("Não ha pedidos feitos hoje");
+//     }
+// }
 
-const relatorioCadastroPedidosDoDia = async () => {
+// const relatorioCadastroPedidosDoDia = async () => {
 
-    //Buscar dados da API 
-    // Depois fazer uma consulta e jogar o processamento para a API
-    var pedido = (await client.get("/relatorioPedidosCadastradosHoje"));
-    console.log(pedido);
+//     //Buscar dados da API 
+//     // Depois fazer uma consulta e jogar o processamento para a API
+//     var pedido = (await client.get("/relatorioPedidosCadastradosHoje"));
+//     console.log(pedido);
 
-    var pedidos_feitos_hoje = pedido.data.map((el) => {
-        el.quilo = el.quilo.toLocaleString('pt-BR', { style: 'decimal' }) + ' kg';
-        el.valor = el.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        el.desconto = el.desconto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        el.totalDaNota = el.totalDaNota.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        el.dataVencimentoPedido = moment(el.dataVencimentoPedido).format("DD-MM-YYYY")
-        el.dataPedido = moment(el.dataPedido).format("DD-MM-YYYY")
-        return el
-    });
+//     var pedidos_feitos_hoje = pedido.data.map((el) => {
+//         el.quilo = el.quilo.toLocaleString('pt-BR', { style: 'decimal' }) + ' kg';
+//         el.valor = el.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+//         el.desconto = el.desconto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+//         el.totalDaNota = el.totalDaNota.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+//         el.dataVencimentoPedido = moment(el.dataVencimentoPedido).format("DD-MM-YYYY")
+//         el.dataPedido = moment(el.dataPedido).format("DD-MM-YYYY")
+//         return el
+//     });
 
-    if (pedidos_feitos_hoje.length > 0) {
-        const classeImpressao = new Impressao(pedidos_feitos_hoje);
-        const documento = await classeImpressao.PreparaDocumento();
-        pdfMake.createPdf(documento)
-            // .download();
-            .open({}, window.open('', '_blank'));
-        // .print();
-    } else {
-        const classeImpressao = new Impressao(pedidos_feitos_hoje);
-        const documento = await classeImpressao.PreparaDocumento();
-        pdfMake.createPdf(documento)
-            // .download();
-            .open({}, window.open('', '_blank'));
-        console.error("Não ha pedidos feitos hoje");
-    }
-}
+//     if (pedidos_feitos_hoje.length > 0) {
+//         const classeImpressao = new Impressao(pedidos_feitos_hoje);
+//         const documento = await classeImpressao.relatorioPedidosCadastradosHoje();
+//         pdfMake.createPdf(documento)
+//             // .download();
+//             .open({}, window.open('', '_blank'));
+//         // .print();
+//     } else {
+//         const classeImpressao = new Impressao(pedidos_feitos_hoje);
+//         const documento = await classeImpressao.relatorioPedidosCadastradosHoje();
+//         pdfMake.createPdf(documento)
+//             // .download();
+//             .open({}, window.open('', '_blank'));
+//         console.error("Não ha pedidos feitos hoje");
+//     }
+// }
 
 const relatorioPorIntervaloDataDoPedido = async () => {
     let inicial = document.getElementById('datainicior1').value
@@ -160,14 +158,14 @@ const relatorioPorIntervaloDataDoPedido = async () => {
 
     if (pedidos_feitos_hoje.length > 0) {
         const classeImpressao = new Impressao(pedidos_feitos_hoje);
-        const documento = await classeImpressao.PreparaDocumento();
+        const documento = await classeImpressao.relatorioPorIntervaloDataDoPedido();
         pdfMake.createPdf(documento)
             // .download();
             .open({}, window.open('', '_blank'));
         // .print();
     } else {
         const classeImpressao = new Impressao(pedidos_feitos_hoje);
-        const documento = await classeImpressao.PreparaDocumento();
+        const documento = await classeImpressao.relatorioPorIntervaloDataDoPedido();
         pdfMake.createPdf(documento)
             // .download();
             .open({}, window.open('', '_blank'));
@@ -197,14 +195,14 @@ const relatorioPorIntervaloDataDoPedidoPorCliente = async () => {
 
     if (pedidos_feitos_hoje.length > 0) {
         const classeImpressao = new Impressao(pedidos_feitos_hoje);
-        const documento = await classeImpressao.PreparaDocumento();
+        const documento = await classeImpressao.relatorioPorIntervaloDataDoPedidoPorCliente();
         pdfMake.createPdf(documento)
             // .download();
             .open({}, window.open('', '_blank'));
         // .print();
     } else {
         const classeImpressao = new Impressao(pedidos_feitos_hoje);
-        const documento = await classeImpressao.PreparaDocumento();
+        const documento = await classeImpressao.relatorioPorIntervaloDataDoPedidoPorCliente();
         pdfMake.createPdf(documento)
             // .download();
             .open({}, window.open('', '_blank'));
@@ -223,9 +221,7 @@ const relatorioCustoComFrete = async () => {
 
     var pedidos_feitos_hoje = pedido.data.map((el) => {
         el.quilo = el.quilo.toLocaleString('pt-BR', { style: 'decimal' }) + ' kg';
-        // el.valor = el.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        // el.desconto = el.desconto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        // el.totalDaNota = el.totalDaNota.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        el.frete = el.frete.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         el.dataVencimentoPedido = moment(el.dataVencimentoPedido).format("DD-MM-YYYY")
         el.dataPedido = moment(el.dataPedido).format("DD-MM-YYYY")
         return el
@@ -233,14 +229,14 @@ const relatorioCustoComFrete = async () => {
 
     if (pedidos_feitos_hoje.length > 0) {
         const classeImpressao = new Impressao(pedidos_feitos_hoje);
-        const documento = await classeImpressao.PreparaDocumento();
+        const documento = await classeImpressao.relatorioCustoComFrete();
         pdfMake.createPdf(documento)
             // .download();
             .open({}, window.open('', '_blank'));
         // .print();
     } else {
         const classeImpressao = new Impressao(pedidos_feitos_hoje);
-        const documento = await classeImpressao.PreparaDocumento();
+        const documento = await classeImpressao.relatorioCustoComFrete();
         pdfMake.createPdf(documento)
             // .download();
             .open({}, window.open('', '_blank'));
@@ -269,14 +265,14 @@ const relatorioPedidosParaCarregamento = async () => {
 
     if (pedidos_feitos_hoje.length > 0) {
         const classeImpressao = new Impressao(pedidos_feitos_hoje);
-        const documento = await classeImpressao.PreparaDocumento();
+        const documento = await classeImpressao.relatorioPedidosParaCarregamento();
         pdfMake.createPdf(documento)
             // .download();
             .open({}, window.open('', '_blank'));
         // .print();
     } else {
         const classeImpressao = new Impressao(pedidos_feitos_hoje);
-        const documento = await classeImpressao.PreparaDocumento();
+        const documento = await classeImpressao.relatorioPedidosParaCarregamento();
         pdfMake.createPdf(documento)
             // .download();
             .open({}, window.open('', '_blank'));
@@ -302,7 +298,7 @@ function Butao(props) {
 
     return (<>
         <div>
-            <div className="Report" >
+            {/* <div className="Report" >
                 <div className='parteTextual'>
                     <img className="ImageReport" src={IconReport} alt="Relatorio" />
                     <Link href="#" onClick={relatorioListaCobrancaDiaria} >
@@ -322,7 +318,7 @@ function Butao(props) {
                     </Link>
                 </div>
             </div>
-            <div className="Report" >
+            <div className="Report" > 
                 <div className='parteTextual'>
                     <img className="ImageReport" src={IconReport} alt="Relatorio" />
                     <Link href="#" onClick={relatorioCadastroPedidosDoDia} >
@@ -331,7 +327,7 @@ function Butao(props) {
                         </p>
                     </Link>
                 </div>
-            </div>
+            </div>*/}
             <div className="Report" >
                 <div className='parteTextual'>
                     <img className="ImageReport" src={IconReport} alt="Relatorio" />

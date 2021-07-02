@@ -32,6 +32,7 @@ export const PedidoList = props => (
             <ReferenceField label="Preço de compra" source="tabelaCompraId" reference="tabeladecompras"><TextField source="name" /></ReferenceField>
             <ReferenceField label="Preço de venda" source="tabelaId" reference="tabeladeprecos"><TextField source="name" /></ReferenceField>
             <DateField source="dataVencimentoPedido" options={{ timeZone: 'UTC' }}/>
+            <NumberField source="quant_frango" />
             <NumberField source="quant_caixa" />
             <NumberField label="Quilos" source="quilo" />
             <NumberField label="Desconto" source="desconto" />
@@ -218,6 +219,7 @@ export const PedidoEdit = props => {
                 }} />
                 <DateInput source="dataVencimentoPedido" options={{ value: dataVencimento }} />
                 <SelectInput source="situacao" defaultChecked={[1]} choices={choices} />
+                <NumberInput source="quant_frango" />
                 <NumberInput source="quant_caixa" />
                 <NumberInput source="quilo" onChange={(event) => {
                     mudarPagamentoFornecedor(event);
@@ -409,6 +411,7 @@ export const PedidoCreate = props => {
                 }} />
                 <DateInput source="dataVencimentoPedido" options={{ value: dataVencimento }} />
                 <SelectInput source="situacao" choices={choices} />
+                <NumberInput source="quant_frango" />
                 <NumberInput source="quant_caixa" />
                 <NumberInput source="quilo" onChange={(event) => {
                     mudarPagamentoFornecedor(event);
