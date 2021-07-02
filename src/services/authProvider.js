@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 export default {
     login: async ({ email, password }) => {
         const request = new Request(process.env.NODE_ENV !== 'production' ? 'http://localhost:3035/login' : 'https://mauboa.com.br/login', {

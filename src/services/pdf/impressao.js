@@ -33,19 +33,7 @@ export class Impressao {
       ];
     });
 
-    const lineHeader = [
-      {
-        text:
-          '__________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________',
-        alignment: 'center',
-        fontSize: 5,
-        colSpan: 7,
-      },
-      {},
-      {},
-    ];
-
-    let content = [header, lineHeader];
+    let content = [header];
     content = [...content, ...body];
     return content;
   }
@@ -57,7 +45,7 @@ export class Impressao {
       header: function () {
         return {
           margin: [14, 12, 14, 0],
-          layout: 'noBorders',
+          layout: 'lightHorizontalLines',
           table: {
             widths: ['*'],
             body: [
@@ -70,18 +58,15 @@ export class Impressao {
       },
       content: [
         {
-          layout: 'noBorders',
+          layout: 'lightHorizontalLines',
           table: {
-            headerRows: 1,
-            widths: [150, 50, 50, 50, 100, 50, 70],
-
             body: corpoDocumento
           }
         },
       ],
       footer(currentPage, pageCount) {
         return {
-          layout: 'noBorders',
+          layout: 'lightHorizontalLines',
           margin: [14, 0, 14, 22],
           table: {
             widths: ['auto'],
@@ -156,19 +141,7 @@ export class Impressao {
       ];
     });
 
-    const lineHeader = [
-      {
-        text:
-          '__________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________',
-        alignment: 'center',
-        fontSize: 5,
-        colSpan: 7,
-      },
-      {},
-      {},
-    ];
-
-    let content = [header, lineHeader];
+    let content = [header];
     content = [...content, ...body];
     return content;
   }
@@ -180,7 +153,7 @@ export class Impressao {
       header: function () {
         return {
           margin: [14, 12, 14, 0],
-          layout: 'noBorders',
+          layout: 'lightHorizontalLines',
           table: {
             widths: ['*'],
             body: [
@@ -193,7 +166,7 @@ export class Impressao {
       },
       content: [
         {
-          layout: 'noBorders',
+          layout: 'lightHorizontalLines',
           table: {
             headerRows: 1,
             widths: [150, 50, 50, 50, 100, 50, 70],
@@ -204,7 +177,7 @@ export class Impressao {
       ],
       footer(currentPage, pageCount) {
         return {
-          layout: 'noBorders',
+          layout: 'lightHorizontalLines',
           margin: [14, 0, 14, 22],
           table: {
             widths: ['auto'],
@@ -278,20 +251,7 @@ export class Impressao {
         { text: prod.dataVencimentoPedido, fontSize: 8 },
       ];
     });
-
-    const lineHeader = [
-      {
-        text:
-          '__________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________',
-        alignment: 'center',
-        fontSize: 5,
-        colSpan: 7,
-      },
-      {},
-      {},
-    ];
-
-    let content = [header, lineHeader];
+    let content = [header];
     content = [...content, ...body];
     return content;
   }
@@ -303,7 +263,7 @@ export class Impressao {
       header: function () {
         return {
           margin: [14, 12, 14, 0],
-          layout: 'noBorders',
+          layout: 'lightHorizontalLines',
           table: {
             widths: ['*'],
             body: [
@@ -316,7 +276,7 @@ export class Impressao {
       },
       content: [
         {
-          layout: 'noBorders',
+          layout: 'lightHorizontalLines',
           table: {
             headerRows: 1,
             widths: [150, 50, 50, 50, 100, 50, 70],
@@ -327,7 +287,7 @@ export class Impressao {
       ],
       footer(currentPage, pageCount) {
         return {
-          layout: 'noBorders',
+          layout: 'lightHorizontalLines',
           margin: [14, 0, 14, 22],
           table: {
             widths: ['auto'],
@@ -374,13 +334,13 @@ export class Impressao {
   }
 
   // Pedidos Pedidos entre datas
-  async relatorioPorIntervaloDataDoPedido() {
-    const corpoDocumento = this.CriarRelatorioPorIntervaloDataDoPedido();
+  async relatorioPorIntervaloDataDoPedido(somas) {
+    const corpoDocumento = this.CriarRelatorioPorIntervaloDataDoPedido(somas);
     const documento = this.GerarRelatorioPorIntervaloDataDoPedido(corpoDocumento, 'RELATÓRIO PEDIDOS ENTRE DATAS');
     return documento;
   }
 
-  CriarRelatorioPorIntervaloDataDoPedido() {
+  CriarRelatorioPorIntervaloDataDoPedido(somas) {
     const header = [
       { text: 'Data do pedido', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
       { text: 'Nome Cliente', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
@@ -405,21 +365,24 @@ export class Impressao {
         { text: prod.situacao, fontSize: 8 },
       ];
     });
-
-    const lineHeader = [
+    const lineSum = [
       {
-        text:
-          '__________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________',
-        alignment: 'center',
-        fontSize: 5,
-        colSpan: 9,
+        text: 'TOTAL',
+        bold: true,
+        fontSize: 8,
       },
-      {},
-      {},
+      { text: '-', bold: true, fontSize: 8 },
+      { text: '-', bold: true, fontSize: 8 },
+      { text: '-', bold: true, fontSize: 8 },
+      { text: somas ? somas[0] : '-', bold: true, fontSize: 8 },
+      { text: somas ? somas[1].toLocaleString('pt-BR', { style: 'decimal' }) + ' kg' : '-', bold: true, fontSize: 8 },
+      { text: somas ? somas[2].toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '-', bold: true, fontSize: 8 },
+      { text: somas ? somas[3].toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '-', bold: true, fontSize: 8 },
+      { text: '-', bold: true, fontSize: 8 },
     ];
 
-    let content = [header, lineHeader];
-    content = [...content, ...body];
+    let content = [header];
+    content = [...content, ...body, lineSum];
     return content;
   }
 
@@ -430,7 +393,7 @@ export class Impressao {
       header: function () {
         return {
           margin: [14, 12, 14, 0],
-          layout: 'noBorders',
+          layout: 'lightHorizontalLines',
           table: {
             widths: ['*'],
             body: [
@@ -443,18 +406,17 @@ export class Impressao {
       },
       content: [
         {
-          layout: 'noBorders',
+          layout: 'lightHorizontalLines',
           table: {
             headerRows: 1,
-            widths: [50, 50, 50, 75, 50, 50, 60, 50, 70],
-
+            widths: ['10%', '18%', '10%', '15%', '8%', '8%', '9%', '11%', '10%'],
             body: corpoDocumento
           }
         },
       ],
       footer(currentPage, pageCount) {
         return {
-          layout: 'noBorders',
+          layout: 'lightHorizontalLines',
           margin: [14, 0, 14, 22],
           table: {
             widths: ['auto'],
@@ -501,13 +463,13 @@ export class Impressao {
   }
 
   // Pedidos Pedidos entre datas por cliente
-  async relatorioPorIntervaloDataDoPedidoPorCliente() {
-    const corpoDocumento = this.CriarRelatorioPorIntervaloDataDoPedidoPorCliente();
+  async relatorioPorIntervaloDataDoPedidoPorCliente(somas) {
+    const corpoDocumento = this.CriarRelatorioPorIntervaloDataDoPedidoPorCliente(somas);
     const documento = this.GerarRelatorioPorIntervaloDataDoPedidoPorCliente(corpoDocumento, 'RELATÓRIO PEDIDOS POR CLIENTE ENTRE DATAS');
     return documento;
   }
 
-  CriarRelatorioPorIntervaloDataDoPedidoPorCliente() {
+  CriarRelatorioPorIntervaloDataDoPedidoPorCliente(somas) {
     const header = [
       { text: 'Data do pedido', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
       { text: 'Nome Cliente', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
@@ -516,6 +478,7 @@ export class Impressao {
       { text: 'Preço/Kg', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
       { text: 'Quilos', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
       { text: 'Desconto', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
+      { text: 'Total da nota', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
       { text: 'Situação', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
     ];
     const body = this.dadosParaImpressao.map((prod) => {
@@ -527,24 +490,29 @@ export class Impressao {
         { text: prod.valor, fontSize: 8 },
         { text: prod.quilo, fontSize: 8 },
         { text: prod.desconto, fontSize: 8 },
+        { text: prod.totalDaNota, fontSize: 8 },
         { text: prod.situacao, fontSize: 8 },
       ];
     });
 
-    const lineHeader = [
+    const lineSum = [
       {
-        text:
-          '__________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________',
-        alignment: 'center',
-        fontSize: 5,
-        colSpan: 8,
+        text: 'TOTAL',
+        bold: true,
+        fontSize: 8,
       },
-      {},
-      {},
+      { text: '-', bold: true, fontSize: 8 },
+      { text: '-', bold: true, fontSize: 8 },
+      { text: somas ? somas[0] : '-', bold: true, fontSize: 8 },
+      { text: '-', bold: true, fontSize: 8 },
+      { text: somas ? somas[1].toLocaleString('pt-BR', { style: 'decimal' }) + ' kg' : '-', bold: true, fontSize: 8 },
+      { text: somas ? somas[2].toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '-', bold: true, fontSize: 8 },
+      { text: somas ? somas[3].toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '-', bold: true, fontSize: 8 },
+      { text: '-', bold: true, fontSize: 8 },
     ];
 
-    let content = [header, lineHeader];
-    content = [...content, ...body];
+    let content = [header];
+    content = [...content, ...body, lineSum];
     return content;
   }
 
@@ -555,7 +523,7 @@ export class Impressao {
       header: function () {
         return {
           margin: [14, 12, 14, 0],
-          layout: 'noBorders',
+          layout: 'lightHorizontalLines',
           table: {
             widths: ['*'],
             body: [
@@ -568,18 +536,17 @@ export class Impressao {
       },
       content: [
         {
-          layout: 'noBorders',
+          layout: 'lightHorizontalLines',
           table: {
             headerRows: 1,
-            widths: [50, 75, 50, 75, 75, 80, 50, 70],
-
+            widths: ['15%', '20%', '12%', '8%', '10%', '8%', '9%', '10%', '9%'],
             body: corpoDocumento
           }
         },
       ],
       footer(currentPage, pageCount) {
         return {
-          layout: 'noBorders',
+          layout: 'lightHorizontalLines',
           margin: [14, 0, 14, 22],
           table: {
             widths: ['auto'],
@@ -626,13 +593,13 @@ export class Impressao {
   }
 
   // Custos com frete
-  async relatorioCustoComFrete() {
-    const corpoDocumento = this.CriarRelatorioCustoComFrete();
+  async relatorioCustoComFrete(somas) {
+    const corpoDocumento = this.CriarRelatorioCustoComFrete(somas);
     const documento = this.GerarRelatorioCustoComFrete(corpoDocumento, 'RELATÓRIO CUSTO COM FRETE ENTRE DATAS');
     return documento;
   }
 
-  CriarRelatorioCustoComFrete() {
+  CriarRelatorioCustoComFrete(somas) {
     const header = [
       { text: 'Data do pedido', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
       { text: 'Quilos', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
@@ -646,20 +613,18 @@ export class Impressao {
       ];
     });
 
-    const lineHeader = [
+    const lineSum = [
       {
-        text:
-          '__________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________',
-        alignment: 'center',
-        fontSize: 5,
-        colSpan: 3,
+        text: 'TOTAL',
+        bold: true,
+        fontSize: 8,
       },
-      {},
-      {},
+      { text: somas ? somas[0].toLocaleString('pt-BR', { style: 'decimal' }) + ' kg' : '-', bold: true, fontSize: 8 },
+      { text: somas ? somas[1].toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '-', bold: true, fontSize: 8 },
     ];
 
-    let content = [header, lineHeader];
-    content = [...content, ...body];
+    let content = [header];
+    content = [...content, ...body, lineSum];
     return content;
   }
 
@@ -670,7 +635,7 @@ export class Impressao {
       header: function () {
         return {
           margin: [14, 12, 14, 0],
-          layout: 'noBorders',
+          layout: 'lightHorizontalLines',
           table: {
             widths: ['*'],
             body: [
@@ -683,18 +648,18 @@ export class Impressao {
       },
       content: [
         {
-          layout: 'noBorders',
+          layout: 'lightHorizontalLines',
           table: {
-            headerRows: 1,
-            widths: ['*', '*', '*'],
-
+            // headerRows: 1,
+            // widths: ['*', '*', '*'],
+            alignment: 'center',
             body: corpoDocumento
           }
         },
       ],
       footer(currentPage, pageCount) {
         return {
-          layout: 'noBorders',
+          layout: 'lightHorizontalLines',
           margin: [14, 0, 14, 22],
           table: {
             widths: ['auto'],
@@ -748,6 +713,7 @@ export class Impressao {
   }
 
   CriarRelatorioPedidosParaCarregamento() {
+    var somas = [0, 0]
     const header = [
       { text: 'Data do pedido', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
       { text: 'Nome Cliente', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
@@ -755,6 +721,7 @@ export class Impressao {
       { text: 'Caixas', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
     ];
     const body = this.dadosParaImpressao.map((prod) => {
+      somas = [somas[0] + prod.quant_frango, somas[1] + prod.quant_caixa]
       return [
         { text: prod.dataPedido, fontSize: 8 },
         { text: prod.name, fontSize: 8 },
@@ -762,20 +729,19 @@ export class Impressao {
         { text: prod.quant_caixa, fontSize: 8 },
       ];
     });
-    const lineHeader = [
+    const lineSum = [
       {
-        text:
-          '__________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________',
-        alignment: 'center',
-        fontSize: 5,
-        colSpan: 4,
+        text: 'TOTAL',
+        bold: true,
+        fontSize: 8,
       },
-      {},
-      {},
+      { text: '-', bold: true, fontSize: 8 },
+      { text: somas ? somas[0] : '-', bold: true, fontSize: 8 },
+      { text: somas ? somas[1] : '-', bold: true, fontSize: 8 },
     ];
 
-    let content = [header, lineHeader];
-    content = [...content, ...body];
+    let content = [header];
+    content = [...content, ...body, lineSum];
     return content;
   }
 
@@ -786,7 +752,7 @@ export class Impressao {
       header: function () {
         return {
           margin: [14, 12, 14, 0],
-          layout: 'noBorders',
+          layout: 'lightHorizontalLines',
           table: {
             widths: ['*'],
             body: [
@@ -799,10 +765,10 @@ export class Impressao {
       },
       content: [
         {
-          layout: 'noBorders',
+          layout: 'lightHorizontalLines',
           table: {
-            headerRows: 1,
-            widths: ['*', '*', '*', '*'],
+            // headerRows: 1,
+            // widths: ['*', '*', '*', '*'],
 
             body: corpoDocumento
           }
@@ -810,7 +776,7 @@ export class Impressao {
       ],
       footer(currentPage, pageCount) {
         return {
-          layout: 'noBorders',
+          layout: 'lightHorizontalLines',
           margin: [14, 0, 14, 22],
           table: {
             widths: ['auto'],
@@ -884,19 +850,7 @@ export class Impressao {
       ];
     });
 
-    const lineHeader = [
-      {
-        text:
-          '__________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________',
-        alignment: 'center',
-        fontSize: 5,
-        colSpan: 7,
-      },
-      {},
-      {},
-    ];
-
-    let content = [header, lineHeader];
+    let content = [header];
     content = [...content, ...body];
     return content;
   }
@@ -908,7 +862,7 @@ export class Impressao {
       header: function () {
         return {
           margin: [14, 12, 14, 0],
-          layout: 'noBorders',
+          layout: 'lightHorizontalLines',
           table: {
             widths: ['*'],
             body: [
@@ -921,18 +875,15 @@ export class Impressao {
       },
       content: [
         {
-          layout: 'noBorders',
+          layout: 'lightHorizontalLines',
           table: {
-            headerRows: 1,
-            widths: [150, 50, 50, 50, 100, 50, 70],
-
             body: corpoDocumento
           }
         },
       ],
       footer(currentPage, pageCount) {
         return {
-          layout: 'noBorders',
+          layout: 'lightHorizontalLines',
           margin: [14, 0, 14, 22],
           table: {
             widths: ['auto'],

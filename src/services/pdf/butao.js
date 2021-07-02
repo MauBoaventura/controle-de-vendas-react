@@ -73,7 +73,6 @@ const useStyles = makeStyles((theme) => ({
 //     //Buscar dados da API 
 //     // Depois fazer uma consulta e jogar o processamento para a API
 //     var pedido = (await client.get("/relatorioPedidosDiario"));
-//     console.log(pedido);
 
 //     var pedidos_feitos_hoje = pedido.data.map((el) => {
 //         el.quilo = el.quilo.toLocaleString('pt-BR', { style: 'decimal' }) + ' kg';
@@ -107,7 +106,6 @@ const useStyles = makeStyles((theme) => ({
 //     //Buscar dados da API 
 //     // Depois fazer uma consulta e jogar o processamento para a API
 //     var pedido = (await client.get("/relatorioPedidosCadastradosHoje"));
-//     console.log(pedido);
 
 //     var pedidos_feitos_hoje = pedido.data.map((el) => {
 //         el.quilo = el.quilo.toLocaleString('pt-BR', { style: 'decimal' }) + ' kg';
@@ -139,14 +137,18 @@ const useStyles = makeStyles((theme) => ({
 const relatorioPorIntervaloDataDoPedido = async () => {
     let inicial = document.getElementById('datainicior1').value
     let final = document.getElementById('datafimr1').value
-    console.log(inicial)
-    console.log(final)
     //Buscar dados da API 
     // Depois fazer uma consulta e jogar o processamento para a API
     var pedido = (await client.get("/relatorioPorIntervaloDataDoPedido?inicial=" + inicial + "&final=" + final));
-    console.log(pedido);
 
+    var somas = [0, 0, 0, 0]
     var pedidos_feitos_hoje = pedido.data.map((el) => {
+        somas = [
+            somas[0] + el.quant_frango,
+            somas[1] + el.quilo,
+            somas[2] + el.desconto,
+            somas[3] + el.totalDaNota
+        ]
         el.quilo = el.quilo.toLocaleString('pt-BR', { style: 'decimal' }) + ' kg';
         el.valor = el.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         el.desconto = el.desconto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -158,7 +160,7 @@ const relatorioPorIntervaloDataDoPedido = async () => {
 
     if (pedidos_feitos_hoje.length > 0) {
         const classeImpressao = new Impressao(pedidos_feitos_hoje);
-        const documento = await classeImpressao.relatorioPorIntervaloDataDoPedido();
+        const documento = await classeImpressao.relatorioPorIntervaloDataDoPedido(somas);
         pdfMake.createPdf(documento)
             // .download();
             .open({}, window.open('', '_blank'));
@@ -177,17 +179,23 @@ const relatorioPorIntervaloDataDoPedidoPorCliente = async () => {
     let inicial = document.getElementById('datainicior2').value
     let cliente = document.getElementById('clienter2').value
     let final = document.getElementById('datafimr2').value
-    
+
     //Buscar dados da API 
     // Depois fazer uma consulta e jogar o processamento para a API
-    var pedido = (await client.get("/relatorioPorIntervaloDataDoPedidoPorCliente?inicial=" + inicial + "&final=" + final+"&clienteId="+cliente));
-    console.log(pedido);
+    var pedido = (await client.get("/relatorioPorIntervaloDataDoPedidoPorCliente?inicial=" + inicial + "&final=" + final + "&clienteId=" + cliente));
+    var somas = [0, 0, 0, 0]
 
     var pedidos_feitos_hoje = pedido.data.map((el) => {
+        somas = [
+            somas[0] + el.quant_frango,
+            somas[1] + el.quilo,
+            somas[2] + el.desconto,
+            somas[3] + el.totalDaNota
+        ]
         el.quilo = el.quilo.toLocaleString('pt-BR', { style: 'decimal' }) + ' kg';
         el.valor = el.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        // el.desconto = el.desconto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        // el.totalDaNota = el.totalDaNota.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        el.desconto = el.desconto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        el.totalDaNota = el.totalDaNota.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         el.dataVencimentoPedido = moment(el.dataVencimentoPedido).format("DD-MM-YYYY")
         el.dataPedido = moment(el.dataPedido).format("DD-MM-YYYY")
         return el
@@ -195,7 +203,7 @@ const relatorioPorIntervaloDataDoPedidoPorCliente = async () => {
 
     if (pedidos_feitos_hoje.length > 0) {
         const classeImpressao = new Impressao(pedidos_feitos_hoje);
-        const documento = await classeImpressao.relatorioPorIntervaloDataDoPedidoPorCliente();
+        const documento = await classeImpressao.relatorioPorIntervaloDataDoPedidoPorCliente(somas);
         pdfMake.createPdf(documento)
             // .download();
             .open({}, window.open('', '_blank'));
@@ -213,13 +221,16 @@ const relatorioPorIntervaloDataDoPedidoPorCliente = async () => {
 const relatorioCustoComFrete = async () => {
     let inicial = document.getElementById('datainicior3').value
     let final = document.getElementById('datafimr3').value
-    
+
     //Buscar dados da API 
     // Depois fazer uma consulta e jogar o processamento para a API
     var pedido = (await client.get("/relatorioCustoComFrete?inicial=" + inicial + "&final=" + final));
-    console.log(pedido);
-
+    var somas = [0, 0]
     var pedidos_feitos_hoje = pedido.data.map((el) => {
+        somas = [
+            somas[0] + el.quilo,
+            somas[1] + el.frete,
+        ]
         el.quilo = el.quilo.toLocaleString('pt-BR', { style: 'decimal' }) + ' kg';
         el.frete = el.frete.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         el.dataVencimentoPedido = moment(el.dataVencimentoPedido).format("DD-MM-YYYY")
@@ -229,7 +240,7 @@ const relatorioCustoComFrete = async () => {
 
     if (pedidos_feitos_hoje.length > 0) {
         const classeImpressao = new Impressao(pedidos_feitos_hoje);
-        const documento = await classeImpressao.relatorioCustoComFrete();
+        const documento = await classeImpressao.relatorioCustoComFrete(somas);
         pdfMake.createPdf(documento)
             // .download();
             .open({}, window.open('', '_blank'));
@@ -247,11 +258,10 @@ const relatorioCustoComFrete = async () => {
 const relatorioPedidosParaCarregamento = async () => {
     let inicial = document.getElementById('datainicior4').value
     let final = document.getElementById('datafimr4').value
-    
+
     //Buscar dados da API 
     // Depois fazer uma consulta e jogar o processamento para a API
     var pedido = (await client.get("/relatorioPedidosParaCarregamento?inicial=" + inicial + "&final=" + final));
-    console.log(pedido);
 
     var pedidos_feitos_hoje = pedido.data.map((el) => {
         // el.quilo = el.quilo.toLocaleString('pt-BR', { style: 'decimal' }) + ' kg';
@@ -389,13 +399,13 @@ function Butao(props) {
                 />
                 <FormControl className={classes.formControl}>
                     <InputLabel shrink htmlFor="clienter2"
-                    className={classes.dataFim}
+                        className={classes.dataFim}
                     >
                         Cliente
                     </InputLabel>
                     <NativeSelect
-                    className={classes.dataFim}
-                    inputProps={{
+                        className={classes.dataFim}
+                        inputProps={{
                             name: 'age',
                             id: 'clienter2',
                         }}
