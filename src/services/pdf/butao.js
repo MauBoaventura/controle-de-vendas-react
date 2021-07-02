@@ -257,7 +257,7 @@ const relatorioCustoComFrete = async () => {
 
 const relatorioPedidosParaCarregamento = async () => {
     let inicial = document.getElementById('datainicior4').value
-    let final = document.getElementById('datafimr4').value
+    let final = document.getElementById('datainicior4').value
 
     //Buscar dados da API 
     // Depois fazer uma consulta e jogar o processamento para a API
@@ -467,7 +467,7 @@ function Butao(props) {
                         shrink: true,
                     }}
                 />
-                <TextField
+                {/* <TextField
                     id="datafimr4"
                     label="Fim"
                     type="date"
@@ -476,7 +476,7 @@ function Butao(props) {
                     InputLabelProps={{
                         shrink: true,
                     }}
-                />
+                /> */}
             </div>
         </div>
     </>
