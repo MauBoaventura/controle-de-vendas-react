@@ -3,19 +3,19 @@ import { useState, useEffect } from 'react';
 import { List, Edit, Create, Filter, ChipField, ReferenceField, SimpleForm, Datagrid, TextField, NumberField, DateField } from 'react-admin';
 import { TextInput, ReferenceInput, SelectInput, DateInput, NumberInput } from 'react-admin';
 import { client } from "../services";
-import { makeStyles, Chip } from '@material-ui/core';
+// import { makeStyles, Chip } from '@material-ui/core';
 
 const frete_por_quilo = process.env.FRETE_POR_QUILO || 0.2;
 
-const useQuickFilterStyles = makeStyles(theme => ({
-    chip: {
-        marginBottom: theme.spacing(1),
-    },
-}));
-const QuickFilter = ({ label }) => {
-    const classes = useQuickFilterStyles();
-    return <Chip className={classes.chip} label={(label)} />;
-};
+// const useQuickFilterStyles = makeStyles(theme => ({
+//     chip: {
+//         marginBottom: theme.spacing(1),
+//     },
+// }));
+// const QuickFilter = ({ label }) => {
+//     const classes = useQuickFilterStyles();
+//     return <Chip className={classes.chip} label={(label)} />;
+// };
 
 const moment = require('moment')
 
@@ -439,10 +439,10 @@ export const PedidoCreate = props => {
 const PedidoFilter = (props) => (
     <Filter {...props}>
         {/* <TextInput label="Search" source="q" alwaysOn /> */}
-        <ReferenceInput label="Cliente" source="clienteId" reference="clientes">
+        {/* <ReferenceInput label="Cliente" source="clienteId" reference="clientes">
             <SelectInput optionText="name" alwaysOn />
-        </ReferenceInput>
-        <QuickFilter source="dataVencimento" label="Vencimento Hoje" defaultValue={moment().format("YYYY-MM-DD")} />
+        </ReferenceInput> */}
+        {/* <QuickFilter source="dataVencimento" label="Vencimento Hoje" defaultValue={moment().format("YYYY-MM-DD")} /> */}
         <DateInput label="Data do pedido" source="dataPedido" />
     </Filter>
 );
