@@ -1,4 +1,6 @@
-# Getting Started with Create React App
+# Controle de vendas ReactJs
+
+Usando biblioteca react-admin para performar melhor a exibição e classificação de dados do banco de dados
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
