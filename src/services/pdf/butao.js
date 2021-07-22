@@ -290,6 +290,51 @@ const relatorioPedidosParaCarregamento = async () => {
     }
 }
 
+const relatorioGeral = async () => {
+    let inicial = document.getElementById('datainicior5').value
+    let final = document.getElementById('datafimr5').value
+    //Buscar dados da API 
+    // Depois fazer uma consulta e jogar o processamento para a API
+    var pedido = (await client.get("/relatorioGeral?inicial=" + inicial + "&final=" + final));
+    console.log(pedido);
+    var somas = [0, 0, 0, 0, 0, 0]
+    var pedidos_feitos_hoje = pedido.data.map((el) => {
+        somas = [
+            somas[0] + el.quant_frango,
+            somas[1] + el.quant_caixa,
+            somas[2] + el.quilo,
+            somas[3] + el.desconto,
+            somas[4] + el.totalDaNota,
+            somas[5] + el.valorLucro
+        ]
+        el.quilo = el.quilo.toLocaleString('pt-BR', { style: 'decimal' }) + ' kg';
+        el.valor = el.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        el.valorCompra = el.valorCompra.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        el.desconto = el.desconto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        el.totalDaNota = el.totalDaNota.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        el.dataVencimentoPedido = moment(el.dataVencimentoPedido).format("DD-MM-YYYY")
+        el.dataPedido = moment(el.dataPedido).format("DD-MM-YYYY")
+        el.valorLucro = el.valorLucro.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        return el
+    });
+
+    if (pedidos_feitos_hoje.length > 0) {
+        const classeImpressao = new Impressao(pedidos_feitos_hoje);
+        const documento = await classeImpressao.relatorioGeral(somas);
+        pdfMake.createPdf(documento)
+            // .download();
+            .open({}, window.open('', '_blank'));
+        // .print();
+    } else {
+        const classeImpressao = new Impressao(pedidos_feitos_hoje);
+        const documento = await classeImpressao.relatorioGeral();
+        pdfMake.createPdf(documento)
+            // .download();
+            .open({}, window.open('', '_blank'));
+        console.error("Não ha pedidos feitos hoje");
+    }
+}
+
 function Butao(props) {
     const classes = useStyles();
     const [clientes, setClientes] = useState([]);
@@ -477,6 +522,36 @@ function Butao(props) {
                         shrink: true,
                     }}
                 /> */}
+            </div>
+            <div className="Report" >
+                <div className='parteTextual'>
+                    <img className="ImageReport" src={IconReport} alt="Relatorio" />
+                    <Link href="#" onClick={relatorioGeral} >
+                        <p className="ReportItemTitle">
+                            Relatorio Geral:
+                        </p>
+                    </Link>
+                </div>
+                <TextField
+                    id="datainicior5"
+                    label="Inicio"
+                    type="date"
+                    defaultValue={moment().format('YYYY-MM-DD')}
+                    className={classes.dataInicio}
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                />
+                <TextField
+                    id="datafimr5"
+                    label="Fim"
+                    type="date"
+                    defaultValue={moment().format('YYYY-MM-DD')}
+                    className={classes.dataFim}
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                />
             </div>
         </div>
     </>

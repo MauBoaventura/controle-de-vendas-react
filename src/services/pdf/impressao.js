@@ -822,36 +822,40 @@ export class Impressao {
         return documento;
     }
 
-    // Pedidos Pedidos entre datas
-    async relatorioPorIntervaloDataDoPedido(somas) {
-        const corpoDocumento = this.CriarRelatorioPorIntervaloDataDoPedido(somas);
-        const documento = this.GerarRelatorioPorIntervaloDataDoPedido(corpoDocumento, 'RELATÓRIO PEDIDOS ENTRE DATAS');
+    // Relatorio Geral
+    async relatorioGeral(somas) {
+        const corpoDocumento = this.CriarRelatorioGeral(somas);
+        const documento = this.GerarRelatorioGeral(corpoDocumento, 'RELATÓRIO GERAL');
         return documento;
     }
 
-    CriarRelatorioPorIntervaloDataDoPedido(somas) {
+    CriarRelatorioGeral(somas) {
         const header = [
-            { text: 'Data do pedido', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
-            { text: 'Nome Cliente', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
-            { text: 'Preço/Kg', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
-            { text: 'Data do Vencimento', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
-            { text: 'Frangos', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
-            { text: 'Quilos', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
-            { text: 'Desconto', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
-            { text: 'Total da nota', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
-            { text: 'Situação', bold: true, fontSize: 9, margin: [0, 4, 0, 0] },
+            { text: 'Data do pedido', bold: true, fontSize: 8, margin: [0, 4, 0, 0] },
+            { text: 'Nome Cliente', bold: true, fontSize: 8, margin: [0, 4, 0, 0] },
+            { text: 'Preço Venda', bold: true, fontSize: 8, margin: [0, 4, 0, 0] },
+            { text: 'Preço Compra', bold: true, fontSize: 8, margin: [0, 4, 0, 0] },
+            { text: 'Data do Vencimento', bold: true, fontSize: 8, margin: [0, 4, 0, 0] },
+            { text: 'Frg', bold: true, fontSize: 8, margin: [0, 4, 0, 0] },
+            { text: 'CX', bold: true, fontSize: 8, margin: [0, 4, 0, 0] },
+            { text: 'Quilos', bold: true, fontSize: 8, margin: [0, 4, 0, 0] },
+            { text: 'Desconto', bold: true, fontSize: 8, margin: [0, 4, 0, 0] },
+            { text: 'Total da nota', bold: true, fontSize: 8, margin: [0, 4, 0, 0] },
+            { text: 'Lucro', bold: true, fontSize: 8, margin: [0, 4, 0, 0] },
         ];
         const body = this.dadosParaImpressao.map((prod) => {
             return [
                 { text: prod.dataPedido, fontSize: 8 },
                 { text: prod.name, fontSize: 8 },
                 { text: prod.valor, fontSize: 8 },
+                { text: prod.valorCompra, fontSize: 8 },
                 { text: prod.dataVencimentoPedido, fontSize: 8 },
                 { text: prod.quant_frango, fontSize: 8 },
+                { text: prod.quant_caixa, fontSize: 8 },
                 { text: prod.quilo, fontSize: 8 },
                 { text: prod.desconto, fontSize: 8 },
                 { text: prod.totalDaNota, fontSize: 8 },
-                { text: prod.situacao, fontSize: 8 },
+                { text: prod.valorLucro, fontSize: 8 },
             ];
         });
         const lineSum = [
@@ -863,11 +867,13 @@ export class Impressao {
             { text: '-', bold: true, fontSize: 8 },
             { text: '-', bold: true, fontSize: 8 },
             { text: '-', bold: true, fontSize: 8 },
-            { text: somas ? somas[0] : '-', bold: true, fontSize: 8 },
-            { text: somas ? somas[1].toLocaleString('pt-BR', { style: 'decimal' }) + ' kg' : '-', bold: true, fontSize: 8 },
-            { text: somas ? somas[2].toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '-', bold: true, fontSize: 8 },
-            { text: somas ? somas[3].toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '-', bold: true, fontSize: 8 },
             { text: '-', bold: true, fontSize: 8 },
+            { text: somas ? somas[0] : '-', bold: true, fontSize: 8 },
+            { text: somas ? somas[1] : '-', bold: true, fontSize: 8 },
+            { text: somas ? somas[2].toLocaleString('pt-BR', { style: 'decimal' }) + ' kg' : '-', bold: true, fontSize: 8 },
+            { text: somas ? somas[3].toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '-', bold: true, fontSize: 8 },
+            { text: somas ? somas[4].toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '-', bold: true, fontSize: 8 },
+            { text: somas ? somas[5].toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '-', bold: true, fontSize: 8 },
         ];
 
         let content = [header];
@@ -875,7 +881,7 @@ export class Impressao {
         return content;
     }
 
-    GerarRelatorioPorIntervaloDataDoPedido(corpoDocumento, tituloRelatorio) {
+    GerarRelatorioGeral(corpoDocumento, tituloRelatorio) {
         const documento = {
             pageSize: 'A4',
             pageMargins: [14, 53, 14, 48],
@@ -898,7 +904,7 @@ export class Impressao {
                     layout: 'lightHorizontalLines',
                     table: {
                         headerRows: 1,
-                        widths: ['10%', '18%', '10%', '15%', '8%', '8%', '9%', '11%', '10%'],
+                        widths: ['11%', '10%', '8%', '8%', '11%', '6%', '6%', '8%', '10%', '11%', '20%'],
                         body: corpoDocumento
                     }
                 },
