@@ -25,21 +25,21 @@ const choices = [{ id: 'PAGO', name: 'PAGO' }, { id: 'ABRT', name: 'ABRT' }, { i
 export const PedidoList = props => (
     <List filters={<PedidoFilter />}{...props}>
         <div className="testee">
-        <Datagrid rowClick="edit">
-            <DateField label="Data do pedido" source="dataPedido" options={{ timeZone: 'UTC' }}/>
-            <ChipField source="situacao" />
-            <ReferenceField source="clienteId" reference="clientes"><TextField source="name" /></ReferenceField>
-            <ReferenceField label="Preço de compra" source="tabelaCompraId" reference="tabeladecompras"><TextField source="name" /></ReferenceField>
-            <ReferenceField label="Preço de venda" source="tabelaId" reference="tabeladeprecos"><TextField source="name" /></ReferenceField>
-            <DateField source="dataVencimentoPedido" options={{ timeZone: 'UTC' }}/>
-            <NumberField source="quant_frango" />
-            <NumberField source="quant_caixa" />
-            <NumberField label="Quilos" source="quilo" />
-            <NumberField label="Desconto" source="desconto" />
-            {/* <NumberField source="frete" /> */}
-            <NumberField source="totalDaNota" />
-            <NumberField source="valorLucro" />
-        </Datagrid>
+            <Datagrid rowClick="edit">
+                <DateField label="Data do pedido" source="dataPedido" options={{ timeZone: 'UTC' }} />
+                <ChipField source="situacao" />
+                <ReferenceField source="clienteId" reference="clientes"><TextField source="name" /></ReferenceField>
+                <ReferenceField label="Preço de compra" source="tabelaCompraId" reference="tabeladecompras"><TextField source="name" /></ReferenceField>
+                <ReferenceField label="Preço de venda" source="tabelaId" reference="tabeladeprecos"><TextField source="name" /></ReferenceField>
+                <DateField source="dataVencimentoPedido" options={{ timeZone: 'UTC' }} />
+                <NumberField source="quant_frango" />
+                <NumberField source="quant_caixa" />
+                <NumberField label="Quilos" source="quilo" />
+                <NumberField label="Desconto" source="desconto" />
+                {/* <NumberField source="frete" /> */}
+                <NumberField source="totalDaNota" />
+                <NumberField source="valorLucro" />
+            </Datagrid>
         </div>
     </List>
 );
@@ -165,7 +165,11 @@ export const PedidoEdit = props => {
             var desconto = document.getElementById('desconto').value;
             var totalDaNota = quilo * (valorDeVenda) - desconto
 
-            var lucro = totalDaNota - (valorCompra * quilo)
+            var quilo = document.getElementById('quilo').value;
+
+            var frete = quilo * frete_por_quilo
+
+            var lucro = totalDaNota - (valorCompra * quilo) - frete
             setValorLucro(parseFloat(lucro.toFixed(2)));
 
         } catch (error) {
@@ -177,10 +181,10 @@ export const PedidoEdit = props => {
         try {
             if (document.getElementById('clienteId') !== undefined) {
                 var tabelaCompraId = document.getElementsByName('tabelaId')[0].value
-                
+
                 var quilo_desconto = document.getElementById('quilo_desconto').value;
                 var valorDeVenda = (await client.get("/tabeladeprecos/" + tabelaCompraId)).data.valor;
-                
+
                 var desconto = quilo_desconto * valorDeVenda;
                 setDesconto(parseFloat(desconto.toFixed(2)));
             }
@@ -363,7 +367,11 @@ export const PedidoCreate = props => {
             var desconto = document.getElementById('desconto').value;
             var totalDaNota = quilo * (valorDeVenda) - desconto
 
-            var lucro = totalDaNota - (valorCompra * quilo)
+            var quilo = document.getElementById('quilo').value;
+
+            var frete = quilo * frete_por_quilo
+
+            var lucro = totalDaNota - (valorCompra * quilo) - frete
             setValorLucro(parseFloat(lucro.toFixed(2)));
 
         } catch (error) {
@@ -375,10 +383,10 @@ export const PedidoCreate = props => {
         try {
             if (document.getElementById('clienteId') !== undefined) {
                 var tabelaCompraId = document.getElementsByName('tabelaId')[0].value
-                
+
                 var quilo_desconto = document.getElementById('quilo_desconto').value;
                 var valorDeVenda = (await client.get("/tabeladeprecos/" + tabelaCompraId)).data.valor;
-                
+
                 var desconto = quilo_desconto * valorDeVenda;
                 setDesconto(parseFloat(desconto.toFixed(2)));
             }
