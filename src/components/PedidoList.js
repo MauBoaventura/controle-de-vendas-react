@@ -365,7 +365,7 @@ export const PedidoCreate = props => {
             var desconto = document.getElementById('desconto').value;
             var totalDaNota = quilo * (valorDeVenda) - desconto
 
-            var quilo = document.getElementById('quilo').value;
+            quilo = document.getElementById('quilo').value;
 
             var frete = quilo * frete_por_quilo
 
