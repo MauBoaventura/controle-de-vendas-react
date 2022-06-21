@@ -5,7 +5,7 @@ import { TextInput, ReferenceInput, SelectInput, DateInput, NumberInput } from '
 import { client } from "../services";
 // import { makeStyles, Chip } from '@material-ui/core';
 
-const frete_por_quilo = process.env.FRETE_POR_QUILO || 0.2;
+const frete_por_quilo = process.env.FRETE_POR_QUILO || 0.25;
 
 // const useQuickFilterStyles = makeStyles(theme => ({
 //     chip: {
@@ -164,8 +164,6 @@ export const PedidoEdit = props => {
             var valorDeVenda = (await client.get("/tabeladeprecos/" + tabelaId)).data.valor;
             var desconto = document.getElementById('desconto').value;
             var totalDaNota = quilo * (valorDeVenda) - desconto
-
-            var quilo = document.getElementById('quilo').value;
 
             var frete = quilo * frete_por_quilo
 
