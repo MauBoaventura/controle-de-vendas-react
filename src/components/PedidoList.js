@@ -5,7 +5,7 @@ import { TextInput, ReferenceInput, SelectInput, DateInput, NumberInput } from '
 import { client } from "../services";
 // import { makeStyles, Chip } from '@material-ui/core';
 
-const frete_por_quilo = process.env.FRETE_POR_QUILO || 0.25;
+const frete_por_quilo = process.env.FRETE_POR_QUILO || 0.30;
 
 // const useQuickFilterStyles = makeStyles(theme => ({
 //     chip: {
